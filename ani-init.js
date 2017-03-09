@@ -57,10 +57,17 @@ const init = (function () {
 			.then((vendors) => {
 				answers.vendors = vendors;
 
+				// Copy conf file (answers) to project instance
 				fs.writeFile("ani-conf.json", JSON.stringify(answers, null, "  "), (err) => {
 					if (err) throw err;
 					console.log(colors.yellow(JSON.stringify(answers, null, "  ")), colors.yellow("\n\nYour project config is listed above.\n\nIf this is inaccurate you can edit 'ani-conf.json' manually.\n"));
 				});	
+
+				// Copy README file to project instance
+				if (!fs.existsSync("README.md")) {
+					fs.createReadStream(__dirname + `/README.md`)
+					.pipe(fs.createWriteStream("./README.md"));
+				}
 			})
 			.catch((error) => console.error("Error in blueprint.js module, ", error));
 		})
