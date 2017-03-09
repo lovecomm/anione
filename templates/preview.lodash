@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title><%= client %> banners</title>
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,400italic,100,100italic,700,300,300italic' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="preview-assets/app.min.css">
+</head>
+<body>
+	<header>
+		<h1><%= client %> banners</h1>
+	</header>
+	<div class="wrapper">
+		<div class="main">
+			<p class="disclaimer">The <strong>Static Banners</strong> will open in a gallery like fashion, where you can click through each of them within the lightbox. However, the <strong>Animated Banners</strong> will have to be opened individually, but will still load in a&nbsp;lightbox.</p>
+
+			<div class="animated">
+				<h2>Static Banners</h2>
+				<ul>
+					<% for(var i = 0; i <= staticBannerFiles.length; i++ ) { var banner = staticBannerFiles[i]; %>
+						<% if (banner !== undefined && banner.match(/^[^.].*$/) ) {
+							var bannerName = banner.match(/(.*)\./)[1];
+						%>
+							<li><a href="assets/static-banners/<%= banner %>" class="gallery banner"><%= bannerName %></a></li>
+						<% } %>
+					<% } %>
+				</ul>
+
+				<% if(!staticOnly) { %>
+					<h2>Animated Banners</h2>
+					<ul>
+						<% for(var c = 0; c <= concepts.length; c++ ) { var concept = concepts[c]; %>
+								<% if (concept !== undefined) { %>
+									<% for(var s = 0; s <= sizes.length; s++ ) { var size = sizes[s]; %>
+										<% if (size !== undefined) { %>
+										<li><a class="html5 banner" href="banners/<%= concept %>/<%= size.name %>/index.html" data-featherlight="iframe" data-featherlight-iframe-width="<%= size.width %>" data-featherlight-iframe-height="<%= size.height %>"><%= concept %>-<%= size.name %></a></li>
+									<% } %>
+								<% } %>
+							<% } %>
+						<% } %>
+					</ul>
+				<% } %>
+			</div>
+		</div>
+	</div>
+	<footer></footer>
+	<script src="preview-assets/jquery.min.js"></script>
+	<script src="preview-assets/featherlight.js" type="text/javascript" charset="utf-8"></script>
+	<script src="preview-assets/featherlight.gallery.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+
+		$('a.gallery').featherlightGallery({
+		  openSpeed: 300
+		});
+
+		$(".main").find("a").each(function() {
+			$(this).on("click", function(e) {
+				setTimeout(function() {
+		  		$("iframe").attr("scrolling", "no");
+				}, 0);
+			});
+		});
+
+	</script>
+	<script src="preview-assets/enhance-featherlight.js"></script>
+</body>
+</html>

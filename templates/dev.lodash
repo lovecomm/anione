@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title><%= client %>  banners</title>
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,400italic,100,100italic,700,300,300italic' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href=".gamma/preview/preview-assets/app.min.css">
+</head>
+<body>
+	<header>
+		<h1><%= client %> banners</h1>
+	</header>
+	<div class="wrapper">
+		<div class="main">
+			<div class="disclaimer">
+				<h2>Gulp Tasks Available:</h2>
+				<ul>
+					<li><em>gulp default</em>&mdash;If you've just run this task, animate the first size of each concept <em>listed below</em>. Once you are done, stop <em>gulp watch</em> with <strong>ctrl +c</strong>, and then run <em>gulp resize</em>.</li>
+					<li><em>gulp resize</em>&mdash;Run this task after you've animated the first size of each concept. It will create all other sizes for each concept, based on the first animated size.</li>
+					<li><em>gulp preview</em>&mdash;Run this task to generate the preview that you may need to send out for review. </li>
+					<li><em>gulp handoff</em>&mdash;Run this task after you're ready to send the banners to a vendor or network.</li>
+				</ul>
+				<h2>Other Tasks: </h2>
+				<ul>
+					<li><em>gulp clean</em>&mdash;Run this task if you'd like to start over. It clears out all your added files except files you may have placed in assets/*</li>
+					<li><em>gulp watch</em>&mdash;This task automatically runs after running <em>gulp default</em> and <em>gulp resize</em>. You can run it manually as well, if you've stopped it, to enable live-reloading.</li>
+					<li><em>gulp check-file-size</em>&mdash;This task automatically runs while <em>gulp watch (browserSync)</em> is running, AND each time you save a banner file. If you are over the max file size allotted for the banners, it will display a console warning with the size of banner (including html, js libs, and images–all compressed).</li>
+				</ul>
+				<br>
+			</div>
+
+			<div class="animated">
+
+				<h2>Banners</h2>
+				<ul>
+					<% if (task === 'master') { %>
+						<% for(var c = 0; c <= concepts.length; c++ ) { var concept = concepts[c]; var size = sizes[0]; %>
+							<% if (concept !== undefined) { %>
+									<li><a target="_blank" href="banners/<%= concept %>/<%= size.name %>/index.html"><%= concept %>-<%= size.name %></a></li>
+							<% } %>
+						<% } %>
+					<% } else if (task === 'resize') { %>
+						<% for(var c = 0; c <= concepts.length; c++ ) { var concept = concepts[c]; %>
+							<% if (concept !== undefined) { %>
+								<% for(var s = 0; s <= sizes.length; s++ ) { var size = sizes[s]; %>
+									<% if (size !== undefined) { %>
+										<li><a target="_blank" href="banners/<%= concept %>/<%= size.name %>/index.html"><%= concept %>-<%= size.name %></a></li>
+									<% } %>
+								<% } %>
+							<% } %>
+						<% } %>
+					<% } %>
+				</ul>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

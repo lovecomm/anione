@@ -1,20 +1,17 @@
-[
-	{
-		"name" : "dbclick",
+{
+	"dbclick": {
 		"link" : "javascript:window.open(window.clickTag)",
 		"scriptHeader" : "<script> var clickTag = '[ClickThroughURL]' </script>",
 		"scriptFooter" : ""
 	},
-	{
-		"name" : "adwords",
+	"adwords": {
 		"link" : "#",
 		"scriptHeader" : "",
 		"scriptFooter" : ""
 	},
-	{
-		"name" : "sizmek",
+	"sizmek": {
 		"link" : "#",
 		"scriptHeader" : "<script type='text/javascript' src='https://secure-ds.serving-sys.com/BurstingScript/EBLoader.js'></script>",
 		"scriptFooter" : "<script>document.getElementById('bannerLink').addEventListener('click', mainClickthrough); function mainClickthrough() { EB.clickthrough(); }</script>"
 	}
-]
+}
