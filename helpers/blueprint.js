@@ -1,26 +1,13 @@
 "use strict";
 
 const 	fs = require("fs"),
-				directories = [
-					"./assets",
-					"./assets/failovers",
-					"./assets/images",
-					"./assets/libs-js",
-					"./assets/libs-css",
-					"./banners",
-					"./templates",
-				],
-				templates = [
-					"banner.lodash",
-					"dev.lodash",
-					"preview.lodash",
-				];
+				paths = require("./paths");
 
 module.exports = {
 	buildDirectories () {
 		return new Promise((resolve, reject) => {
-			for (let i = 0; i <= directories.length; i++) {
-				const directory = directories[i];
+			for (let i = 0; i <= paths.directories.length; i++) {
+				const directory = paths.directories[i];
 				if (
 					directory
 					&& !fs.existsSync(directory)
@@ -31,8 +18,8 @@ module.exports = {
 	},
 	copyTemplates () {
 		return new Promise((resolve, reject) => {
-			for (let i = 0; i <= templates.length; i++) {
-				const template = templates[i];
+			for (let i = 0; i <= paths.templates.length; i++) {
+				const template = paths.templates[i];
 				if (
 					template
 					&& !fs.existsSync(`./templates/${template}`)
