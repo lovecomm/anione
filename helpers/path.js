@@ -23,7 +23,7 @@ module.exports = {
 		"dev" : "templates/dev.pug",
 		"preview" : "templates/preview.pug",
 	},
-	getImagesFor(size, copy) {
+	getImagesFor (size, copy) {
 		return new Promise((resolve, reject) => {
 			if (!size) reject("Error: No size was provided to path.getImages()");
 
@@ -50,5 +50,28 @@ module.exports = {
 			}
 			resolve(imgArray);
 		});
+	},
+	getFilesIn (path) {
+		return new Promise((resolve, reject) => {
+			const files = fs.readdirSync(path);
+			let filesArray = [];
+
+			for (let i = 0; i < files.length; i++) {
+				let filename = files[i];
+
+				if (!test.isHidden(filename)) { // we don't want hidden files
+					let layerName = camel(filename.split('.')[0]);
+
+					filesArray.push(
+						{
+							'fileName' : filename,
+							"layerName" : layerName,
+							"path": path + filename,
+						}
+					);
+				}
+			}
+			resolve(filesArray);
+		})
 	}
 };

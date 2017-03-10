@@ -1,3 +1,5 @@
+"use strict";
+
 const 	inquirer = require("inquirer"),
 				fs = require("fs"),
 				colors = require("colors"),

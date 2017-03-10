@@ -13,6 +13,7 @@ module.exports = {
 			if (!config) reject("Error loading ani-conf.json in banner.one()");
 			return path.getImagesFor(config.sizes[0])
 			.then((imageArray) => processBannerTemplate(config, imageArray))
+			.then(() => resolve())
 			.catch((error) => reject(error))
 		});
 	}
@@ -33,18 +34,14 @@ function processBannerTemplate (config, imageArray) {
 						width: config.sizes[0].split("x")[0],
 						height: config.sizes[0].split("x")[1],
 						pageTitle: `${toTitleCase(config.project)}-${config.sizes[0]}`,
-						youAreUsingPug: false,	
 					};
 
 		const html = pug.renderFile(templatePath, Object.assign(options, locals));
-		console.log(html);
 
 		test.exists(`./banners/${config.project}-${config.sizes[0]}.html`)
 		.then((bannerExists) => {
 			if (!bannerExists) {
 				fs.writeFileSync(`./banners/${config.project}-${config.sizes[0]}.html`, html);
-				// fs.createReadStream(html)
-				// .pipe(fs.createWriteStream(`./banners/${config.project}-${config.sizes[0]}.html`));
 			}
 		})
 		.then(() => resolve())
