@@ -7,7 +7,7 @@ const 	inquirer = require("inquirer"),
 				test = require("./helpers/test");
 
 
-const init = (function () {
+exports.init = function () {
 	test.exists("./ani-conf.json")
 	.then((configExists) => {
 		if (configExists) {
@@ -68,7 +68,9 @@ const init = (function () {
 		}
 	})
 	.catch((error) => console.warn("Error checking if config exists, ", error));
-})();
+};
+
+exports.init();
 
 function generateConfig (config) {
 	console.log("\nconfig \n", config);
