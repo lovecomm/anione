@@ -1,0 +1,55 @@
+doctype html
+html(lang="en")
+	head
+		title= pageTitle
+		meta(name='ad.size' content='width=' + width + ',height=' + height)
+		meta(charset='UTF-8')
+		<!-- DO NOT REMOVE THIS COMMENT: vendorScriptHeader -->
+		style(type="text/css").
+			body {
+				background-color: #cdcdcd;
+				margin: 0;
+			}
+
+			* { cursor: pointer; }
+
+			a {
+				width: #{width}px;
+				height: #{height}px;
+				background: white;
+				display: block;
+				position: relative;
+				overflow: hidden;
+				background-repeat: no-repeat;
+				z-index: 1000;
+			}
+
+			a * {
+				position: absolute;
+				z-index: 1;
+				border: none; /*This is to get rid of an IE rendering bug/feature/whatever that adds a red boarder to all of the child elements of the link tag*/
+			}
+
+			/* CSS HELPER CLASSES */
+			.halign { left: 0; right: 0; margin: auto; } /* Align a DOM element horizontally */
+			.valign {	top: 0;	bottom: 0; margin: auto; } /* Align a DOM element vertically*/
+			/* /CSS HELPER CLASSES */
+	body
+		| 
+		| 
+		a(href='#DO_NOT_REMOVE:vendorLink' id='bannerLink')
+			each image in images
+				| <img src="#{imgPath + image.fileName}" id="#{image.layerName}" alt="#{image.layerName}" />
+				|
+		| 
+		| 
+		script
+			| var tl = new TimelineMax();
+			| var h = #{height}; // Banner's height
+			| var w = #{width}; // Banner's width
+			|
+			each image in images
+				| var #{image.layerName} = document.getElementById("#{image.layerName}");
+				|
+				
+		<!-- DO NOT REMOVE THIS COMMENT: vendorScriptFooter -->

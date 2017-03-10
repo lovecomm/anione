@@ -20,8 +20,5 @@ An NPM modules to ease the repetitiveness that comes with coding HTML5 banner ad
 		* (css-library.css)
 		...
 * banners
-	* (size)
-		* (size.html)
-		* (size.scss)
-		* (size.js)
+	* (size.html)
 	...

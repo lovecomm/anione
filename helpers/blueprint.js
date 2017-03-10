@@ -1,13 +1,13 @@
 "use strict";
 
 const 	fs = require("fs"),
-				paths = require("./paths");
+				path = require("./path");
 
 module.exports = {
 	buildDirectories (data) {
 		return new Promise((resolve, reject) => {
-			for (let i = 0; i <= paths.directories.length; i++) {
-				const directory = paths.directories[i];
+			for (let i = 0; i <= path.buildDirectories.length; i++) {
+				const directory = path.buildDirectories[i];
 				if (
 					directory
 					&& !fs.existsSync(directory)
@@ -18,8 +18,8 @@ module.exports = {
 	},
 	copyTemplates () {
 		return new Promise((resolve, reject) => {
-			for (let i = 0; i <= paths.templates.length; i++) {
-				const template = paths.templates[i];
+			for (let i = 0; i <= path.templates.length; i++) {
+				const template = path.templates[i];
 				if (
 					template
 					&& !fs.existsSync(`./templates/${template}`)

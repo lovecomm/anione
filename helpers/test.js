@@ -1,3 +1,5 @@
+"use strict";
+
 const fs = require("fs");
 
 module.exports = {
@@ -9,5 +11,12 @@ module.exports = {
 				resolve(false);
 			}
 		})
+	},
+	isHidden (filename) {
+		if (/^\./.test(filename)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
