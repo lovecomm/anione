@@ -4,7 +4,7 @@ const 	fs = require("fs"),
 				paths = require("./paths");
 
 module.exports = {
-	buildDirectories () {
+	buildDirectories (data) {
 		return new Promise((resolve, reject) => {
 			for (let i = 0; i <= paths.directories.length; i++) {
 				const directory = paths.directories[i];
@@ -13,7 +13,7 @@ module.exports = {
 					&& !fs.existsSync(directory)
 				) fs.mkdirSync(directory)
 			}
-			resolve();
+			resolve(data);
 		});
 	},
 	copyTemplates () {

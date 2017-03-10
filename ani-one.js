@@ -4,19 +4,8 @@ const 	inquirer = require("inquirer"),
 				sizeOptions = require("./conf-options/sizes.json"),
 				vendorOptions = require("./conf-options/vendors.json"),
 				blueprint = require("./helpers/blueprint"),
-				test = require("./helpers/test");
-
-
-exports.init = function () {
-	test.exists("./ani-conf.json")
-	.then((configExists) => {
-		if (configExists) {
-			console.warn("Sorry! You're project has already been initialized. You can view options by running `ani --help`, or edit the ani-conf.json file manually.");
-		} else {
-			const 	sizes = sizeOptions,
-						vendorsNames = Object.keys(vendorOptions);
-	
-			inquirer.prompt([
+				test = require("./helpers/test"),
+				configQuestions = [
 				{
 					type: "input",
 					name: "project",
@@ -38,7 +27,7 @@ exports.init = function () {
 					type: "checkbox",
 					message: "Select Banner Sizes. If you do not see all of the required sizes for your project here, you can add them after the project initialization by running `ani size -a widthXHeight`, or by editing ani-conf.js directly.\n",
 					name: "sizes",
-					choices: sizes,
+					choices: sizeOptions,
 					validate: (answer) => {
 						if (answer.length < 1) return "You must choose at least one size.\n";
 						return true;
@@ -47,33 +36,29 @@ exports.init = function () {
 					type: "checkbox",
 					message: "Select Vendors. If you do not see all of the required sizes for your project here, you can add them after the project initialization by running `ani vendor -a vendorName`, or by editing ani-conf.js directly.\n",
 					name: "vendors",
-					choices: vendorsNames,
+					choices: Object.keys(vendorOptions),
 					validate: (answer) => {
 						if (answer.length < 1) return "You must choose at least one vendor.\n";
 						return true;
 					}
 				}
-			]).then((answers) => {
-				blueprint.buildDirectories()
-				.then(() => getExpandedVendors(answers.vendors))
-				.then((vendors) => generateConfig({
-					project: answers.project,
-					maxFileSize: answers.maxFileSize,
-					sizes: answers.sizes,
-					vendors: vendors,
-				}))
-				.catch((error) => console.error("Error in blueprint.js module, ", error));
-			})
-			.catch((error) => console.error("Error in init, ", error));	
-		}
-	})
-	.catch((error) => console.warn("Error checking if config exists, ", error));
-};
+			];
 
-exports.init();
+function getExpandedVendors (answers) {
+	vendorKeys = answers.vendors;
+	return new Promise((resolve, reject) => {
+		let vendors = {};
+		for (let i = 0; i <= vendorKeys.length; i++) {
+			const vendorName = vendorKeys[i];
+			const vendor = vendorOptions[vendorName];
+			if (vendor) vendors[vendorName] = vendor;
+		}
+		answers.vendors = vendors;
+		resolve(answers);
+	});
+}
 
 function generateConfig (config) {
-	console.log("\nconfig \n", config);
 	return new Promise((resolve, reject) => {
 		// Copy conf file to project instance
 		fs.writeFile("ani-conf.json", JSON.stringify(config, null, "  "), (err) => {
@@ -94,14 +79,23 @@ function generateConfig (config) {
 	})
 }
 
-function getExpandedVendors (vendorKeys) {
+function sizeOne (config) {
 	return new Promise((resolve, reject) => {
-		let vendors = {};
-		for (let i = 0; i <= vendorKeys.length; i++) {
-			const vendorName = vendorKeys[i];
-			const vendor = vendorOptions[vendorName];
-			if (vendor) vendors[vendorName] = vendor;
-		}
-		resolve(vendors);
+
 	});
 }
+
+exports.init = function () {
+	test.exists("./ani-conf.json")
+	.then((configExists) => {
+		return !configExists 
+		? inquirer.prompt(configQuestions) 
+		: console.warn("Sorry! You're project has already been initialized. You can view options by running `ani --help`, or edit the ani-conf.json file manually.");
+	})
+	.then((answers) => blueprint.buildDirectories(answers))
+	.then((answers) => getExpandedVendors(answers))
+	.then((vendors) => generateConfig(vendors))
+	.catch((error) => console.warn("Error during initialization, ", error));
+};
+
+exports.init();
