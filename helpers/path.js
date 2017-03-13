@@ -16,7 +16,7 @@ module.exports = {
 	directories: {
 		"scripts": "./assets/libs-js/",
 		"styles": "./assets/libs-css/",
-		"images": "../../assets/images/",
+		"images": "../assets/images/",
 	},
 	template: {
 		"banner" : "templates/banner.pug",

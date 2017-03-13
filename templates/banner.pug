@@ -4,8 +4,8 @@ html(lang="en")
 		title= pageTitle
 		meta(name='ad.size' content='width=' + width + ',height=' + height)
 		meta(charset='UTF-8')
-		<!-- DO NOT REMOVE THIS COMMENT: vendorScriptHeader -->
-		style(type="text/css").
+		<!-- ANIONE: vendorScriptHeader -->
+		style(data-anione="styles" type="text/css").
 			body {
 				background-color: #cdcdcd;
 				margin: 0;
@@ -37,13 +37,14 @@ html(lang="en")
 	body
 		| 
 		| 
-		a(href='#DO_NOT_REMOVE:vendorLink' id='bannerLink')
+		a(data-anione="markup" href='#DO_NOT_REMOVE:vendorLink' id='bannerLink')
 			each image in images
 				| <img src="#{imgPath + image.fileName}" id="#{image.layerName}" alt="#{image.layerName}" />
 				|
 		| 
 		| 
-		script
+		script(data-anione="scripts")
+			| return (function() {
 			| var tl = new TimelineMax();
 			| var h = #{height}; // Banner's height
 			| var w = #{width}; // Banner's width
@@ -51,5 +52,7 @@ html(lang="en")
 			each image in images
 				| var #{image.layerName} = document.getElementById("#{image.layerName}");
 				|
-				
-		<!-- DO NOT REMOVE THIS COMMENT: vendorScriptFooter -->
+
+			| return tl
+			| })();
+<!-- ANIONE: vendorScriptFooter -->

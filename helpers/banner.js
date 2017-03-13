@@ -37,7 +37,6 @@ function processBannerTemplate (config, imageArray) {
 					};
 
 		const html = pug.renderFile(templatePath, Object.assign(options, locals));
-
 		test.exists(`./banners/${config.project}-${config.sizes[0]}.html`)
 		.then((bannerExists) => {
 			if (!bannerExists) {
