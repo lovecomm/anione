@@ -9,8 +9,8 @@ module.exports = {
 		return new Promise((resolve, reject) => {
 			path.getFilesIn("./banners/")
 			.then((banners) => processDevTemplate(banners))
+			.then(() => resolve())
 			.catch((error) => reject(error))
-
 		});	
 	}
 }
@@ -26,8 +26,7 @@ function processDevTemplate (banners) {
 						banners: banners
 					};
 		const html = pug.renderFile(templatePath, Object.assign(options, locals));
-		console.log(html)
 		fs.writeFileSync("./index.html", html);
-
+		resolve();
 	});
 }

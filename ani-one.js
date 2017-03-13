@@ -2,7 +2,8 @@
 
 const 	banner = require("./helpers/banner"),
 				test = require("./helpers/test"),
-				dev = require("./helpers/dev");
+				dev = require("./helpers/dev"),
+				watch = require("./helpers/watch");
 
 
 exports.one = function () {
@@ -13,6 +14,7 @@ exports.one = function () {
 		: console.warn("Sorry! You're project hasn't been initialized. Please run `ani init` to initialize your project.");
 	})
 	.then(() => dev.buildView())
+	.then(() => watch.init())
 	.catch((error) => console.warn("Error while attempting to generate the first banner: ", error));
 }; 
 

@@ -11,9 +11,8 @@ html(lang="en")
 				margin: 0;
 			}
 
-			* { cursor: pointer; }
-
 			a {
+				cursor: pointer;
 				width: #{width}px;
 				height: #{height}px;
 				background: white;
@@ -25,6 +24,7 @@ html(lang="en")
 			}
 
 			a * {
+				cursor: pointer;
 				position: absolute;
 				z-index: 1;
 				border: none; /*This is to get rid of an IE rendering bug/feature/whatever that adds a red boarder to all of the child elements of the link tag*/

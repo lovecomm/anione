@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/logancalldev/anione#readme",
   "dependencies": {
+    "browser-sync": "^2.18.8",
     "co": "^4.6.0",
     "co-prompt": "^1.0.0",
     "colors": "^1.1.2",

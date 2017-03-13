@@ -24,6 +24,11 @@ module.exports = {
 		"dev" : "templates/dev.pug",
 		"preview" : "templates/preview.pug",
 	},
+	watch: [
+		"banners/**", 
+		"assets/**", 
+		"index.html",
+	],
 	getImagesFor (size, copy) {
 		return new Promise((resolve, reject) => {
 			if (!size) reject("Error: No size was provided to path.getImages()");
