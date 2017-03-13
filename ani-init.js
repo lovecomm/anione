@@ -47,7 +47,7 @@ const 	inquirer = require("inquirer"),
 			];
 
 function getExpandedVendors (answers) {
-	vendorKeys = answers.vendors;
+	var vendorKeys = answers.vendors;
 	return new Promise((resolve, reject) => {
 		let vendors = {};
 		for (let i = 0; i <= vendorKeys.length; i++) {
