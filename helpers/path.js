@@ -1,18 +1,22 @@
 "use strict";
 
 const camel = require('to-camel-case'),
-			fs = require("fs"),
+			fs = require("fs-extra"),
 			test = require("./test");
 
 module.exports = {
 	buildDirectories: [ // these are the directories that are generated during `ani init`
 		"./assets",
 		"./.anione",
+		"./.anione/preview",
 		"./assets/failovers",
 		"./assets/images",
 		"./assets/libs-js",
 		"./assets/libs-css",
 		"./banners",
+		"./preview",
+		"./preview/assets",
+		"./preview/banners",
 	],
 	directories: {
 		"scripts": "./assets/libs-js/",
@@ -79,5 +83,51 @@ module.exports = {
 			}
 			resolve(filesArray);
 		})
+	},
+	copyFilesIn (target, destination) {
+		return new Promise((resolve, reject) => {
+			fs.copy(target, destination, (err) => {
+				if (err) {
+					reject(err);
+				} else {
+					resolve();
+				}
+			});
+		});
+	},
+	cleanDir (target) {
+		return new Promise((resolve, reject) => {
+			fs.remove(target, err => {
+				if (err) return reject(err)
+				resolve();
+			});
+		});
+	},
+	createDir (target) {
+		return new Promise((resolve, reject) => {
+			test.exists(target)
+			.then((targetExists) => {
+				if (!targetExists) {
+					fs.mkdir(target, err => {
+						if (err) return reject(err)
+						resolve();
+					})
+				} else resolve();
+			})
+			.catch((error) => reject(error))
+		});
+	},
+	strReplaceInFiles (file, target, replacement) {
+		return new Promise((resolve, reject) => {
+			fs.readFile(file, 'utf8', (err,data) => {
+				if (err) reject(err);
+				var result = data.replace(target, replacement);
+
+				fs.writeFile(file, result, 'utf8', (err) => {
+					if (err) reject(err);
+					resolve();
+				});
+			});
+		});
 	}
 };

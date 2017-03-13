@@ -28,6 +28,7 @@
     "co-prompt": "^1.0.0",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
+    "fs-extra": "^2.0.0",
     "inquirer": "^3.0.6",
     "pug": "^2.0.0-beta11",
     "titlecase": "^1.1.2",
