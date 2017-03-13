@@ -7,6 +7,7 @@ const camel = require('to-camel-case'),
 module.exports = {
 	buildDirectories: [ // these are the directories that are generated during `ani init`
 		"./assets",
+		"./.anione",
 		"./assets/failovers",
 		"./assets/images",
 		"./assets/libs-js",

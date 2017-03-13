@@ -77,6 +77,17 @@ function generateConfig (config) {
 			}
 		})
 		.catch((error) => console.warn("Error checking if README.md exists, ", error));
+
+		// Copy scrubber.js file to project instance
+		test.exists("./.anione/scrubber.js")
+		.then((scrubberExists) => {
+			if (!scrubberExists) {
+				fs.createReadStream(__dirname + `/utils/scrubber.js`)
+				.pipe(fs.createWriteStream("./.anione/scrubber.js"));
+			}
+		})
+		.catch((error) => console.warn("Error checking if README.md exists, ", error));
+		
 		resolve(config);
 	})
 }

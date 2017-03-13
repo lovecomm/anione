@@ -1,16 +1,138 @@
 doctype html
-html(lang="en")
+html(lang="en")#anione-dev-html
 	head
 		title= "Anione Development"
 		meta(charset='UTF-8')
+		script(src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous")
+		script(src="https://s0.2mdn.net/ads/studio/cached_libs/tweenmax_1.18.0_499ba64a23378545748ff12d372e59e9_min.js")
+		script(src=".anione/scrubber.js")
 		style(type="text/css").
-			body {
-				background-color: #cdcdcd;
-				margin: 0;
+			html#anione-dev-html,
+			body#anione-dev-body { 
+				height: 100%;
+				width: 100%;
 			}
-	body
+
+			body#anione-dev-body {
+				background-color: #666;
+				display: flex;
+			}
+
+			body#anione-dev-body > #nav {
+				width: 250px;
+				background: #003a6d;
+				box-shadow:  0 20px #333;
+				display: flex;
+				flex-direction: column;
+			}
+
+			body#anione-dev-body > #nav > div > button {
+				width: 100%; 
+				border-radius: 0;
+				border: none;
+				background: rgba(0, 0, 0, 0);
+				color: white;
+				padding: 20px 5px;
+				font-size: 16px;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+				transition: background 0.3s ease;
+				outline: none !important;
+			}
+
+			body#anione-dev-body > #nav > div > button:first-of-type { border-top: 1px solid rgba(255, 255, 255, 0.5);}
+
+			body#anione-dev-body > #nav > div > button:hover { background: #00529c; }
+
+			body#anione-dev-body > #nav > div#title {
+				text-align: center;
+				color: white;
+				font-size: 22px;
+				text-transform: uppercase;
+				padding: 40px 5px 40px;
+				font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+				background: #001A31;
+			}
+
+			body#anione-dev-body > #view {
+				width: calc(100% - 250px);
+				display: flex;
+				justify-content: center;
+				flex-direction: column;
+				align-items: center;
+			}
+
+			body#anione-dev-body > #view > #banner-wrapper {
+				padding: 20px;
+			}
+
+			body#anione-dev-body > #view > #scrubber {
+				width: 100%;
+				text-align: center;
+				margin: 40px 0;
+			}
+			
+			body#anione-dev-body > #view > #scrubber polygon,
+			body#anione-dev-body > #view > #scrubber rect { fill: white !important; }
+			body#anione-dev-body > #view > #scrubber > div:last-of-type { background-color: white !important; }
+	body#anione-dev-body
 		div#nav
 			each banner in banners
 				| <div><button data-link="#{banner.path}">#{banner.layerName}</button></div>		
 		div#view
+			div#banner-wrapper
+			div#scrubber
+		script.
+			$(document).ready(function() {
+				var banners = $("#nav").find("button");
+				var destination = $("#banner-wrapper");
+				var scrubber = $("#scrubber");
+
+				console.log($(banners[0]).attr("data-link").split("./")[1]);
+				handleAjax($(banners[0]).attr("data-link").split("./")[1])
+
+				$(banners).on("click", function() {
+					var link = $(this).attr("data-link").split("./")[1];
+					handleAjax.call(this, link);
+				});
+
+				function handleAjax (link) {
+					$.ajax({
+						type: "GET",
+						url: link,
+						dataFilter: dataFilter,
+						success: function (response) {
+							$(destination).text("");
+							$(scrubber).text("");
+							$(destination).append(response.styles);
+							$(destination).append(response.markup);
+							window.banner = new Function(response.scripts)();
+
+							handleScrubber();
+						},
+						error: function (response) {
+							console.error("Error in getting banner, ", response);
+						}
+					});
+				}
+
+				function dataFilter (response) {
+					var styles = response.match(/<style data-anione="styles".*?>[\s\S]*?<\/style>/ig)[0];
+					var scriptsRegex = /<script data-anione="scripts".*?>([\s\S]*?)<\/script>/ig;
+					var scripts = scriptsRegex.exec(response)[1];
+					var markup = response.match(/<a data-anione="markup".*?>[\s\S]*?<\/a>/ig)[0];
+					markup = markup.replace(/\.\.\/assets\//ig, "assets/");
+
+					return {
+						styles: styles,
+						scripts: scripts,
+						markup: markup
+					};
+				}
+
+				function handleScrubber () {
+					var slider = new GSAPTLSlider(window.banner, "scrubber", {
+						width: 300
+					});
+				}
+			});
 			

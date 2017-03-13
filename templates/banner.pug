@@ -30,6 +30,8 @@ html(lang="en")
 				border: none; /*This is to get rid of an IE rendering bug/feature/whatever that adds a red boarder to all of the child elements of the link tag*/
 			}
 
+			a > * { opacity: 0; } /* Start with all layers hidden to make it visually easier to develop */
+
 			/* CSS HELPER CLASSES */
 			.halign { left: 0; right: 0; margin: auto; } /* Align a DOM element horizontally */
 			.valign {	top: 0;	bottom: 0; margin: auto; } /* Align a DOM element vertically*/
