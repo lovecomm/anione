@@ -10,8 +10,10 @@ exports.resize = function () {
 	test.exists("./banners/" + config.project + "-" + config.sizes[0] + ".html")
 	.then((firstSizeExists) => {
 		if (!firstSizeExists) {
+			console.log("first size doesn't exist")
 			Promise.reject("First banner not found. Generate the first banner by running `ani one`.")
 		} else {
+			console.log("before banner.resize()")
 			return banner.resize();
 		}
 	})

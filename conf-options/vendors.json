@@ -1,7 +1,7 @@
 {
 	"dbclick": {
 		"link" : "javascript:window.open(window.clickTag)",
-		"scriptHeader" : "<script> var clickTag = '[ClickThroughURL]' </script>",
+		"scriptHeader" : "<script> var clickTag = '[ClickThroughURL]'; </script>",
 		"scriptFooter" : ""
 	},
 	"adwords": {

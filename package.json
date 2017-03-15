@@ -33,6 +33,7 @@
     "pug": "^2.0.0-beta11",
     "rsyncwrapper": "^2.0.1",
     "titlecase": "^1.1.2",
-    "to-camel-case": "^1.0.0"
+    "to-camel-case": "^1.0.0",
+    "zip-folder": "^1.0.0"
   }
 }

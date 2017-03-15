@@ -32,7 +32,7 @@ module.exports = {
 		"assets/**", 
 		"index.html",
 	],
-	getImagesFor (size, copy) {
+	getImagesFor (size, copy, destination) {
 		return new Promise((resolve, reject) => {
 			if (!size) reject("Error: No size was provided to path.getImages()");
 
@@ -45,14 +45,18 @@ module.exports = {
 				if (!test.isHidden(filename)) { // we don't want hidden files
 					let layerName = camel(filename.split('-')[0]);
 
-					if( filename.indexOf( size ) > -1 ) {
+					if( filename.indexOf( size ) > -1 ) { // specific to the size provided
 						imgArray.push({
 							'fileName' : filename,
 							"layerName" : layerName}
 						);
 
 						if(copy) {
-							//copy images to banner specific folder
+							try {
+								fs.copySync("./assets/images/" + filename, destination + filename)
+							} catch (err) {
+								reject(err)
+							}
 						}
 					}
 				}
@@ -118,7 +122,7 @@ module.exports = {
 	},
 	strReplaceInFiles (file, target, replacement) {
 		return new Promise((resolve, reject) => {
-			fs.readFile(file, 'utf8', (err,data) => {
+			fs.readFile(file, 'utf8', (err, data) => {
 				if (err) reject(err);
 				var result = data.replace(target, replacement);
 

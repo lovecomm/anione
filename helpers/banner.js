@@ -4,7 +4,8 @@ const 	path = require("./path"),
 				test = require("./test"),
 				fs = require("fs"),
 				pug = require("pug"),
-				processTemplate = require("./processTemplate");
+				processTemplate = require("./processTemplate"),
+				zipFolder = require('zip-folder');
 
 module.exports = {
 	one () {
@@ -62,6 +63,45 @@ module.exports = {
 			});
 			resolve();
 		});
+	},
+	vendorify (banner) {
+		return new Promise((resolve, reject) => {
+			const config = JSON.parse(fs.readFileSync('./ani-conf.json', 'utf8'));
+			Object.keys(config.vendors).forEach((vendorName) => {
+				const vendor = config.vendors[vendorName],
+							size = banner.layerName.split(config.project)[1],
+							destPath = "./" + config.project + "-handoff/" + vendorName + "/" + config.project + "-" + size,
+							sourcePath = "./banners/" + config.project + "-" + size + ".html";
+				let source = fs.readFileSync(sourcePath, 'utf8');
+
+					source = replaceString(source, "<!-- ANIONE: vendorScriptHeader -->", vendor.scriptHeader)
+					source = replaceString(source, "<!-- ANIONE: vendorScriptFooter -->", vendor.scriptFooter)
+					source = replaceString(source, "#ANIONE:vendorLink", vendor.link)
+					source = replaceString(source, "../assets/images/", "")
+					source = replaceString(source, "../assets/libs-css/", "")
+					source = replaceString(source, "../assets/libs-js/", "")
+					source = source.replace(/return \(function\(\) \{/, '(function() {')
+				
+				path.createDir(destPath + "/")
+				.then(() => fs.writeFileSync(destPath + "/index.html", source))
+				.then(() => path.getImagesFor(size, true, destPath + "/")) 
+				.then(() => path.copyFilesIn("./assets/libs-css/", destPath + "/"))
+				.then(() => path.copyFilesIn("./assets/libs-js/", destPath + "/"))
+				.then(() => {
+					zipFolder(destPath, destPath + ".zip", (err) => {
+						if(err) reject(err);
+					});
+					return
+				})
+				.then(() => {
+					// ALSO DEBUG WHY RESIZE ISN'T WORKING
+					// fs.removeSync(destPath + "/") // need to delete the non-zipped dir
+	
+					// resolve();
+				})
+				.catch((error) => reject(error));
+			});
+		})
 	}
 }
 
