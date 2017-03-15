@@ -11,18 +11,22 @@ html(lang="en")#anione-dev-html
 			h1 #{pageTitle}-Banners
 		div.wrapper
 			div.main
-				p.disclaimer The <strong>Static Banners</strong> will open in a gallery like fashion, where you can click through each of them within the lightbox. However, the <strong>Animated Banners</strong> will have to be opened individually, but will still load in a&nbsp;lightbox.
+				if banners.failovers.length > 0
+					if banners.animated.length > 0
+						p.disclaimer The <strong>Static Banners</strong> will open in a gallery like fashion, where you can click through each of them within the lightbox. However, the <strong>Animated Banners</strong> will have to be opened individually, but will still load in a&nbsp;lightbox.
 				div.animated
-					h2 Static Banners
-					ul
-						each banner in banners.failovers
-							| <li><a href="#{banner.path}" class="gallery banner">#{banner.layerName}</a></li>
-							|
-					h2 Animated Banners
-					ul
-						each banner in banners.animated
-							| <li><a class="html5 banner" href="#{banner.path}" data-featherlight="iframe" data-featherlight-iframe-width="160" data-featherlight-iframe-height="600">#{banner.layerName}</a></li>
-							|
+					if banners.failovers.length > 0
+						h2 Static Banners
+						ul
+							each banner in banners.failovers
+								| <li><a href="#{banner.path}" class="gallery banner">#{banner.layerName}</a></li>
+								|
+					if banners.animated.length > 0
+						h2 Animated Banners
+						ul
+							each banner in banners.animated
+								| <li><a class="html5 banner" href="#{banner.path}" data-featherlight="iframe" data-featherlight-iframe-width="160" data-featherlight-iframe-height="600">#{banner.layerName}</a></li>
+								|
 		footer
 		script(src="featherlight.js" type="text/javascript" charset="utf-8")
 		script(src="featherlight.gallery.js" type="text/javascript" charset="utf-8")
