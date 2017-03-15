@@ -16,15 +16,15 @@ const 	inquirer = require("inquirer"),
 						if (answer.length < 1) return "You must enter the Project Name.\n";
 						return true;
 					}
-				}, {
-					type: "input",
-					name: "maxFileSize",
-					message: "What is the max file size for your HTML5 banners (in kb)?\n",
-					validate: (answer) => {
-						if ( isNaN(parseInt(answer)) ) return "You must select a number.\n";
-						return true;
-					},
-					filter: (answer) => parseInt(answer)
+				// }, {
+				// 	type: "input",
+				// 	name: "maxFileSize",
+				// 	message: "What is the max file size for your HTML5 banners (in kb)?\n",
+				// 	validate: (answer) => {
+				// 		if ( isNaN(parseInt(answer)) ) return "You must select a number.\n";
+				// 		return true;
+				// 	},
+				// 	filter: (answer) => parseInt(answer)
 				}, {
 					type: "checkbox",
 					message: "Select Banner Sizes. If you do not see all of the required sizes for your project here, you can add them after the project initialization by running `ani size -a widthXHeight`, or by editing ani-conf.js directly.\n",
