@@ -11,11 +11,11 @@ exports.one = function () {
 	.then((configExists) => {
 		return configExists 
 		? banner.one()
-		: console.warn("Sorry! You're project hasn't been initialized. Please run `ani init` to initialize your project.");
+		: Promise.reject("No ani-conf.json found. Please run `ani init` to initialize your project.");
 	})
 	.then(() => dev.buildView())
 	.then(() => watch.init())
-	.catch((error) => console.warn("Error while attempting to generate the first banner: ", error));
+	.catch((error) => console.warn("Error while attempting to generate the first banner:\n", error));
 }; 
 
 exports.one();

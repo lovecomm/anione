@@ -63,8 +63,8 @@ function getExpandedVendors (answers) {
 function generateConfig (config) {
 	return new Promise((resolve, reject) => {
 		// Copy conf file to project instance
-		fs.writeFile("ani-conf.json", JSON.stringify(config, null, "  "), (err) => {
-			if (err) throw err;
+		fs.writeFile("ani-conf.json", JSON.stringify(config, null, "  "), (error) => {
+			if (error) Promise.reject(error);
 			console.log(colors.yellow(JSON.stringify(config, null, "  ")), colors.yellow("\n\nYour project config is listed above.\n\nIf this is inaccurate you can edit 'ani-conf.json' manually.\n"));
 		});	
 
@@ -97,12 +97,12 @@ exports.init = function () {
 	.then((configExists) => {
 		return !configExists 
 		? inquirer.prompt(configQuestions) 
-		: console.warn("Sorry! You're project has already been initialized. You can view options by running `ani --help`, or edit the ani-conf.json file manually.");
+		: Promise.reject("Project already initialized. You can view options by running `ani --help`, or edit the ani-conf.json file manually.");
 	})
 	.then((answers) => blueprint.buildDirectories(answers))
 	.then((answers) => getExpandedVendors(answers))
 	.then((vendors) => generateConfig(vendors))
-	.catch((error) => console.warn("Error during initialization, ", error));
+	.catch((error) => console.warn("Error during initialization:\n", error));
 };
 
 exports.init();

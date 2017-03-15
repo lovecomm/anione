@@ -8,7 +8,6 @@ module.exports = {
 	buildDirectories: [ // these are the directories that are generated during `ani init`
 		"./assets",
 		"./.anione",
-		"./.anione/preview",
 		"./assets/failovers",
 		"./assets/images",
 		"./assets/libs-js",

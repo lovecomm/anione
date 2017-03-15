@@ -26,7 +26,7 @@ exports.stage = function () {
 	test.exists("./preview")
 	.then((previewExists) => {
 		if (!previewExists) {
-			return console.error("You must generate a preview before you can copy it to a staging server. To do this run `ani preview`.")
+			return Promise.reject("No preview found. Generate a prview by running `ani preview`.")
 		} else {
 			let config = JSON.parse(fs.readFileSync('./ani-conf.json', 'utf8'));
 			let rsyncOptions = {
@@ -49,7 +49,7 @@ exports.stage = function () {
 			}
 		}
 	})
-	.catch((error) => console.error("Error in checking if preview exists", error))
+	.catch((error) => console.error("Error in `ani stage`:\n", error))
 };
 
 exports.stage();
