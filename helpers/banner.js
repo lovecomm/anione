@@ -54,13 +54,11 @@ module.exports = {
 							// JS vars of size
 							files[size].html = replaceString(files[size].html, "var w = " + one.width , "var w = " + files[size].width);
 							files[size].html = replaceString(files[size].html, "var h = " + one.height , "var h = " + files[size].height);
+
+							fs.writeFileSync(`./banners/${config.project}-${files[size].size}.html`, files[size].html);
 						}
 					})
 				}
-			});
-			Object.keys(files).forEach((key) => {
-				const file = files[key];
-				fs.writeFileSync(`./banners/${config.project}-${file.size}.html`, file.html);
 			});
 			resolve();
 		});

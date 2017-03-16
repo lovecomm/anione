@@ -13,7 +13,6 @@ exports.resize = function () {
 			console.log("first size doesn't exist")
 			Promise.reject("First banner not found. Generate the first banner by running `ani one`.")
 		} else {
-			console.log("before banner.resize()")
 			return banner.resize();
 		}
 	})
