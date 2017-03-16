@@ -3,7 +3,9 @@
 const fs = require("fs"),
 			test = require("./helpers/test"),
 			path = require("./helpers/path"),
-			banner = require("./helpers/banner");
+			banner = require("./helpers/banner"),
+			FolderZip = require('folder-zip'),
+			rimraf = require('rimraf');
 
 exports.handoff = function () {
 	const config = JSON.parse(fs.readFileSync('./ani-conf.json', 'utf8')),
@@ -27,6 +29,15 @@ exports.handoff = function () {
 			banner.vendorify(file)
 			.catch((error) => console.error(error))
 		})
+	})
+	.then(() => {
+		const zip = new FolderZip();
+		setTimeout(() => {
+			zip.zipFolder("./" + config.project + "-handoff/", () => {
+				zip.writeToFileSync("./" + config.project + "-handoff.zip");
+				rimraf.sync("./" + config.project + "-handoff")
+			});
+		}, 500)
 	})
 	.catch((error) => console.error("Error in `ani resize`:\n", error))
 };

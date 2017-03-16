@@ -63,7 +63,7 @@ module.exports = {
 			resolve();
 		});
 	},
-	vendorify (banner) {
+	vendorify (banner, count) {
 		return new Promise((resolve, reject) => {
 			const config = JSON.parse(fs.readFileSync('./ani-conf.json', 'utf8'));
 			Object.keys(config.vendors).forEach((vendorName) => {
@@ -80,7 +80,7 @@ module.exports = {
 					source = replaceString(source, "../assets/libs-css/", "")
 					source = replaceString(source, "../assets/libs-js/", "")
 					source = source.replace(/return \(function\(\) \{/, '(function() {')
-				
+				console.log("before createDir")
 				path.createDir(destPath + "/")
 				.then(() => fs.writeFileSync(destPath + "/index.html", source))
 				.then(() => path.getImagesFor(size, true, destPath + "/")) 
@@ -88,24 +88,21 @@ module.exports = {
 				.then(() => path.copyFilesIn("./assets/libs-js/", destPath + "/"))
 				.then(() => {
 					const zip = new FolderZip();
-					zip.zipFolder(destPath, () => {
-						zip.writeToFile(destPath + ".zip", () => {
-							return
-						})
-					})
-				})
-				.then(() => {
-					// ALSO DEBUG WHY RESIZE ISN'T WORKING
-					rimraf(destPath, {
-					}, (error) => {
-						if (error) Promise.reject(error)
-						resolve()
-					});
+					 zip.zipFolder(destPath, () => {
+							zip.writeToFileSync(destPath + ".zip");
+							rimraf.sync(destPath);
+							console.log("after removing non-zipped banner folder")
+					 });
 				})
 				.catch((error) => reject(error));
 			});
+			console.log("end of vendorify")
 		})
 	}
+}
+
+function stoperror() {
+   return true;
 }
 
 function replaceString (source, pattern, newString) {

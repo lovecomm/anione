@@ -107,15 +107,18 @@ module.exports = {
 		});
 	},
 	createDir (target) {
+		console.log("in createDir")
 		return new Promise((resolve, reject) => {
-			test.exists(target)
+			return test.exists(target)
 			.then((targetExists) => {
 				if (!targetExists) {
-					fs.mkdir(target, err => {
-						if (err) return reject(err)
-						resolve();
-					})
-				} else resolve();
+					fs.mkdirSync(target);
+					console.log("end of createDir")
+					resolve();
+				} else {
+					console.log("end of createDir")
+					resolve();
+				}
 			})
 			.catch((error) => reject(error))
 		});
