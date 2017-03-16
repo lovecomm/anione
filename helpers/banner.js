@@ -5,7 +5,8 @@ const 	path = require("./path"),
 				fs = require("fs"),
 				pug = require("pug"),
 				processTemplate = require("./processTemplate"),
-				zipFolder = require('zip-folder');
+				FolderZip = require('folder-zip'),
+				rimraf = require('rimraf');
 
 module.exports = {
 	one () {
@@ -88,15 +89,21 @@ module.exports = {
 				.then(() => path.copyFilesIn("./assets/libs-css/", destPath + "/"))
 				.then(() => path.copyFilesIn("./assets/libs-js/", destPath + "/"))
 				.then(() => {
-					zipFolder(destPath, destPath + ".zip", (err) => {
-						if(err) reject(err);
-					});
-					return
+					const zip = new FolderZip();
+					zip.zipFolder(destPath, () => {
+						zip.writeToFile(destPath + ".zip", () => {
+							return
+						})
+					})
 				})
 				.then(() => {
 					// ALSO DEBUG WHY RESIZE ISN'T WORKING
-					// fs.removeSync(destPath + "/") // need to delete the non-zipped dir
-	
+					// rimraf(destPath, {
+					// }, (error) => {
+					// 	if (error) Promise.reject(error)
+					// 	// resolve()
+					// });
+					
 					// resolve();
 				})
 				.catch((error) => reject(error));
