@@ -98,13 +98,11 @@ module.exports = {
 				})
 				.then(() => {
 					// ALSO DEBUG WHY RESIZE ISN'T WORKING
-					// rimraf(destPath, {
-					// }, (error) => {
-					// 	if (error) Promise.reject(error)
-					// 	// resolve()
-					// });
-					
-					// resolve();
+					rimraf(destPath, {
+					}, (error) => {
+						if (error) Promise.reject(error)
+						resolve()
+					});
 				})
 				.catch((error) => reject(error));
 			});
