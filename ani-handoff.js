@@ -1,6 +1,6 @@
 "use strict";
 
-exports.handoff = function () {
+exports.handoff = async function () {
 	
 };
 

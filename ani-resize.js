@@ -1,6 +1,6 @@
 "use strict";
 
-exports.resize = function () {
+exports.resize = async function () {
 	
 };
 
