@@ -16,4 +16,5 @@ program
 	.command("handoff", "Zip/Package/Compress the Banner-Ads for ad-network delivery.")
 	.command("size <a/r> <size>", "Add or remove a banner size. -a for Add, -r for Remove")
 	.command("vendor <a/r> <name>", "Add or remove a banner vendor. -a for Add, -r for Remove")
+	.command("test", "Testing Async/Generators")
 	.parse(process.argv);

@@ -1,11 +1,12 @@
 "use strict";
 
-const 	inquirer = require("inquirer"),
-				fs = require("fs"),
+const 	Promise = require("bluebird"),
+				fs = Promise.promisifyAll(require("fs")),
+				inquirer = require("inquirer"),
 				colors = require("colors"),
 				sizeOptions = require("./conf-options/sizes.json"),
 				vendorOptions = require("./conf-options/vendors.json"),
-				blueprint = require("./helpers/blueprint"),
+				helpers = require("./helpers/helpers"),
 				test = require("./helpers/test"),
 				configQuestions = [
 				{
@@ -16,15 +17,6 @@ const 	inquirer = require("inquirer"),
 						if (answer.length < 1) return "You must enter the Project Name.\n";
 						return true;
 					}
-				// }, {
-				// 	type: "input",
-				// 	name: "maxFileSize",
-				// 	message: "What is the max file size for your HTML5 banners (in kb)?\n",
-				// 	validate: (answer) => {
-				// 		if ( isNaN(parseInt(answer)) ) return "You must select a number.\n";
-				// 		return true;
-				// 	},
-				// 	filter: (answer) => parseInt(answer)
 				}, {
 					type: "checkbox",
 					message: "Select Banner Sizes. If you do not see all of the required sizes for your project here, you can add them after the project initialization by running `ani size -a widthXHeight`, or by editing ani-conf.js directly.\n",
@@ -46,63 +38,52 @@ const 	inquirer = require("inquirer"),
 				}
 			];
 
-function getExpandedVendors (answers) {
-	var vendorKeys = answers.vendors;
-	return new Promise((resolve, reject) => {
-		let vendors = {};
-		for (let i = 0; i <= vendorKeys.length; i++) {
-			const vendorName = vendorKeys[i];
-			const vendor = vendorOptions[vendorName];
-			if (vendor) vendors[vendorName] = vendor;
+exports.init = async function () {
+
+	let config = await helpers.getConfig();
+
+	if (!config.exists) {
+		try {
+			let config = await inquirer.prompt(configQuestions);
+			helpers.buildDirectories();
+			config = await expandVendorsForConfig(config)
+			generateConfig(config);
+		} catch (e) {
+			console.error("Error during init: ", e);
 		}
-		answers.vendors = vendors;
-		resolve(answers);
-	});
-}
-
-function generateConfig (config) {
-	return new Promise((resolve, reject) => {
-		// Copy conf file to project instance
-		fs.writeFile("ani-conf.json", JSON.stringify(config, null, "  "), (error) => {
-			if (error) Promise.reject(error);
-			console.log(colors.yellow(JSON.stringify(config, null, "  ")), colors.yellow("\n\nYour project config is listed above.\n\nIf this is inaccurate you can edit 'ani-conf.json' manually.\n"));
-		});	
-
-		// Copy README file to project instance
-		test.exists("./README.md")
-		.then((readmeExists) => {
-			if (!readmeExists) {
-				fs.createReadStream(__dirname + `/README.md`)
-				.pipe(fs.createWriteStream("./README.md"));
-			}
-		})
-		.catch((error) => console.warn("Error checking if README.md exists, ", error));
-
-		// Copy scrubber.js file to project instance
-		test.exists("./.anione/scrubber.js")
-		.then((scrubberExists) => {
-			if (!scrubberExists) {
-				fs.createReadStream(__dirname + `/utils/scrubber.js`)
-				.pipe(fs.createWriteStream("./.anione/scrubber.js"));
-			}
-		})
-		.catch((error) => console.warn("Error checking if README.md exists, ", error));
-		
-		resolve(config);
-	})
-}
-
-exports.init = function () {
-	test.exists("./ani-conf.json")
-	.then((configExists) => {
-		return !configExists 
-		? inquirer.prompt(configQuestions) 
-		: Promise.reject("Project already initialized. You can view options by running `ani --help`, or edit the ani-conf.json file manually.");
-	})
-	.then((answers) => blueprint.buildDirectories(answers))
-	.then((answers) => getExpandedVendors(answers))
-	.then((vendors) => generateConfig(vendors))
-	.catch((error) => console.warn("Error during initialization:\n", error));
+	} else {
+		console.warn("Your project has already been initialized. To re-initialize, first delete ani-conf.json.")
+	}
 };
 
 exports.init();
+
+function expandVendorsForConfig (answers) {
+	var vendorKeys = answers.vendors;
+	let vendors = {};
+	for (let i = 0; i <= vendorKeys.length; i++) {
+		const vendorName = vendorKeys[i];
+		const vendor = vendorOptions[vendorName];
+		if (vendor) vendors[vendorName] = vendor;
+	}
+	answers.vendors = vendors;
+	return Promise.resolve(answers);
+}
+
+async function generateConfig (config) {
+	// Copy conf file to project instance
+	await (fs.writeFileAsync("ani-conf.json", JSON.stringify(config, null, "  ")))
+
+	// Display config to user
+	console.log(colors.yellow(JSON.stringify(config, null, "  ")), colors.yellow("\n\nYour project config is listed above.\n\nIf this is inaccurate you can edit 'ani-conf.json' manually.\n"));
+
+	// Copy README file to project instance
+	fs.createReadStream(__dirname + `/README.md`)
+	.pipe(fs.createWriteStream("./README.md"));
+
+	// Copy scrubber.js file to project instance
+	fs.createReadStream(__dirname + `/utils/scrubber.js`)
+	.pipe(fs.createWriteStream("./.anione/scrubber.js"));
+
+	return Promise.resolve();
+}
