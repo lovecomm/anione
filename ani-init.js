@@ -4,10 +4,9 @@ const 	Promise = require("bluebird"),
 				fs = Promise.promisifyAll(require("fs")),
 				inquirer = require("inquirer"),
 				colors = require("colors"),
-				sizeOptions = require("./conf-options/sizes.json"),
-				vendorOptions = require("./conf-options/vendors.json"),
-				helpers = require("./helpers/helpers"),
-				test = require("./helpers/test"),
+				sizeOptions = require("./assets/conf-options/sizes.json"),
+				vendorOptions = require("./assets/conf-options/vendors.json"),
+				_ = require("./utils"),
 				configQuestions = [
 				{
 					type: "input",
@@ -39,51 +38,7 @@ const 	Promise = require("bluebird"),
 			];
 
 exports.init = async function () {
-
-	let config = await helpers.getConfig();
-
-	if (!config.exists) {
-		try {
-			let config = await inquirer.prompt(configQuestions);
-			helpers.buildDirectories();
-			config = await expandVendorsForConfig(config)
-			generateConfig(config);
-		} catch (e) {
-			console.error("Error during init: ", e);
-		}
-	} else {
-		console.warn("Your project has already been initialized. To re-initialize, first delete ani-conf.json.")
-	}
+	
 };
 
 exports.init();
-
-function expandVendorsForConfig (answers) {
-	var vendorKeys = answers.vendors;
-	let vendors = {};
-	for (let i = 0; i <= vendorKeys.length; i++) {
-		const vendorName = vendorKeys[i];
-		const vendor = vendorOptions[vendorName];
-		if (vendor) vendors[vendorName] = vendor;
-	}
-	answers.vendors = vendors;
-	return Promise.resolve(answers);
-}
-
-async function generateConfig (config) {
-	// Copy conf file to project instance
-	await (fs.writeFileAsync("ani-conf.json", JSON.stringify(config, null, "  ")))
-
-	// Display config to user
-	console.log(colors.yellow(JSON.stringify(config, null, "  ")), colors.yellow("\n\nYour project config is listed above.\n\nIf this is inaccurate you can edit 'ani-conf.json' manually.\n"));
-
-	// Copy README file to project instance
-	fs.createReadStream(__dirname + `/README.md`)
-	.pipe(fs.createWriteStream("./README.md"));
-
-	// Copy scrubber.js file to project instance
-	fs.createReadStream(__dirname + `/utils/scrubber.js`)
-	.pipe(fs.createWriteStream("./.anione/scrubber.js"));
-
-	return Promise.resolve();
-}
