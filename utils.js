@@ -30,6 +30,19 @@ const utils = {
 			return Promise.resolve(false)
 		}
 	},
+	vendorify: async function(config, banner, vendor_name, vendor_path) {
+		const vendor = config.vendors[vendor_name],
+					size = banner.layer_name.split(config.project)[1],
+					destPath = "./" + config.project + "-handoff/" + vendor_name + "/" + config.project + "-" + size,
+					source_path = "./banners/" + config.project + "-" + size + ".html";
+		
+		try {
+			let source = await fs.readFileAsync(source_path, "utf8");
+			
+		} catch (e) {
+			return Promise.reject("Failed to vendorify.\nBanner: ${banner.filename}.\nVendor: ${vendor_name}.")
+		}
+	},
 	get_images_for: async function (size, copy, destination) {
 		let img_array = [];
 		
