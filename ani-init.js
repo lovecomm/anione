@@ -77,8 +77,7 @@ exports.init = async function () {
 		if (!scrubber_file) fs.createReadStream(__dirname + `/assets/scrubber.js`) .pipe(fs.createWriteStream("./.anione/scrubber.js"));
 
 	} catch (e) {
-		console.log(e)
-		$.handle_error(e, "Could not generate config.")
+		$.handle_error(e, "Failed to generate config.")
 	}
 };
 
