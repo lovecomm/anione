@@ -58,7 +58,7 @@ html(lang="en")
 			each image in images
 				| var #{image.layer_name} = document.getElementById("#{image.layer_name}");
 				|
-
+			| // NOTE: You will get console errors on the dev page until you start building the timeline. This doesn't cause any issues.
 			| return tl
 			| })();
 <!-- ANIONE: vendorScriptFooter -->

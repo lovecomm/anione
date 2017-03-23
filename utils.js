@@ -5,7 +5,8 @@ const Promise = require("bluebird"),
 			camel = require('to-camel-case'),
 			toTitleCase = require('titlecase'),
 			pug = require("pug"),
-			colors = require("colors");
+			colors = require("colors"),
+			browserSync = require('browser-sync').create();
 
 const utils = {
 	handle_error(e, default_message) { // We don't want to just throw an error object at a user.. so when we reject promises we can give useful error messages. But in the event that it's not an error we're aware of, we still want a default message for that specific ani command.
@@ -58,7 +59,8 @@ const utils = {
 	processTemplates: {
 		banner: async function (config, image_list) {
 			const $ = utils;
-			const templatePath = `${__dirname}/${$.paths.template.banner}`,
+			const banner_file = await $.read_path(`./banners/${config.project}-${config.sizes[0]}.html`),
+						templatePath = `${__dirname}/${$.paths.template.banner}`,
 						options = {
 							pretty: true,
 							filename: "index.html",
@@ -71,19 +73,52 @@ const utils = {
 							pageTitle: `${toTitleCase(config.project)}-${config.sizes[0]}`,
 						},
 						html = pug.renderFile(templatePath, Object.assign(options, locals));
+
+			if (banner_file) return console.warn(colors.yellow(`Your first banner, ${config.project}-${config.sizes[0]} already exists. You can regenerate it from the template by deleting ${config.project}-${config.sizes[0]}.html and running 'ani one' again.`));
+
 			try {
 				locals.scripts = await fs.readdirAsync($.paths.directories.scripts);
 				locals.styles = await fs.readdirAsync($.paths.directories.styles);
 				await fs.writeFileAsync(`./banners/${config.project}-${config.sizes[0]}.html`, html);
 				return Promise.resolve();
 			} catch (e) {
-				console.log(e)
 				return Promise.reject("Failed to process banner template.")
 			}
 		},
 		dev: async function () {
 			const $ = utils;
+			try {
+				const banner_files = await fs.readdirAsync("./banners/"),
+							templatePath = `${__dirname}/${$.paths.template.dev}`,
+							options = {
+								pretty: true,
+								filename: "index.html",
+							},
+							locals = { banners: banner_files },
+							html = pug.renderFile(templatePath, Object.assign(options, locals));
+							console.log(banner_files)
+				await fs.writeFileAsync("./index.html", html);
+			} catch (e) {
+				return Promise.reject("Failed to process development template.")
+			}
 		}
+	},
+	watch: async function() {
+		const config = await this.read_path("./ani-conf.json");
+
+		if (!config) return Promise.reject("No config found. Watch failed.")
+
+		browserSync.init({
+			server: {
+					baseDir: './'
+			},
+			files: this.paths.watch,
+			logPrefix: config.project,
+			reloadOnRestart: true,
+			notify: false
+		});
+		browserSync.watch(this.paths.watch);
+		return Promise.resolve();
 	},
 	build_directories: async function() {
 		for (let i = 0; i <= this.paths.build_directories.length; i++) {

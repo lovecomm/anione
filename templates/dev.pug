@@ -78,7 +78,7 @@ html(lang="en")#anione-dev-html
 	body#anione-dev-body
 		div#nav
 			each banner in banners
-				| <div><button data-link="#{banner.path}">#{banner.layerName}</button></div>		
+				| <div><button data-link="banners/#{banner}">#{banner.split("/")[0].split(".")[0]}</button></div>		
 		div#view
 			div#banner-wrapper
 			div#scrubber
@@ -88,8 +88,7 @@ html(lang="en")#anione-dev-html
 				var destination = $("#banner-wrapper");
 				var scrubber = $("#scrubber");
 
-				console.log($(banners[0]).attr("data-link").split("./")[1]);
-				handleAjax($(banners[0]).attr("data-link").split("./")[1])
+				handleAjax($(banners[0]).attr("data-link"));
 
 				$(banners).on("click", function() {
 					var link = $(this).attr("data-link").split("./")[1];
