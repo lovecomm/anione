@@ -96,7 +96,7 @@ const utils = {
 							},
 							locals = { banners: banner_files },
 							html = pug.renderFile(templatePath, Object.assign(options, locals));
-							console.log(banner_files)
+							
 				await fs.writeFileAsync("./index.html", html);
 			} catch (e) {
 				return Promise.reject("Failed to process development template.")
@@ -119,6 +119,10 @@ const utils = {
 		});
 		browserSync.watch(this.paths.watch);
 		return Promise.resolve();
+	},
+	replaceString (source, pattern, newString) {
+		const re = new RegExp(pattern, "g");
+		return source.replace(re, newString);
 	},
 	build_directories: async function() {
 		for (let i = 0; i <= this.paths.build_directories.length; i++) {

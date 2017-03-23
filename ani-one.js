@@ -16,7 +16,6 @@ exports.one = async function () {
 		await $.processTemplates.dev();
 		await $.watch();
 	} catch (e) {
-		console.log(e)
 		$.handle_error(e, "Failed to generate first banner.")
 	}
 }; 

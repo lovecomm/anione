@@ -91,7 +91,7 @@ html(lang="en")#anione-dev-html
 				handleAjax($(banners[0]).attr("data-link"));
 
 				$(banners).on("click", function() {
-					var link = $(this).attr("data-link").split("./")[1];
+					var link = $(this).attr("data-link");
 					handleAjax.call(this, link);
 				});
 
