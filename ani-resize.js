@@ -30,16 +30,16 @@ exports.resize = async function () {
 			}
 
 			// CSS instances of size
-			banner.file = $.replaceString(banner.file, first_banner.width + "px" , banner.width + "px");
-			banner.file = $.replaceString(banner.file, first_banner.height + "px" , banner.height + "px");
+			banner.file = $.replace_string_regex(banner.file, first_banner.width + "px" , banner.width + "px");
+			banner.file = $.replace_string_regex(banner.file, first_banner.height + "px" , banner.height + "px");
 			// Meta tags that use size
-			banner.file = $.replaceString(banner.file, "width=" + first_banner.width , "width=" + banner.width);
-			banner.file = $.replaceString(banner.file, "height=" + first_banner.height , "height=" + banner.height);
+			banner.file = $.replace_string_regex(banner.file, "width=" + first_banner.width , "width=" + banner.width);
+			banner.file = $.replace_string_regex(banner.file, "height=" + first_banner.height , "height=" + banner.height);
 			// HTML/img instances of size
-			banner.file = $.replaceString(banner.file, first_banner.size , banner.size);
+			banner.file = $.replace_string_regex(banner.file, first_banner.size , banner.size);
 			// JS vars of size
-			banner.file = $.replaceString(banner.file, "var w = " + first_banner.width , "var w = " + banner.width);
-			banner.file = $.replaceString(banner.file, "var h = " + first_banner.height , "var h = " + banner.height);
+			banner.file = $.replace_string_regex(banner.file, "var w = " + first_banner.width , "var w = " + banner.width);
+			banner.file = $.replace_string_regex(banner.file, "var h = " + first_banner.height , "var h = " + banner.height);
 
 			await fs.writeFileAsync(`./banners/${config.project}-${banner.size}.html`, banner.file)
 		}

@@ -101,11 +101,53 @@ const utils = {
 			} catch (e) {
 				return Promise.reject("Failed to process development template.")
 			}
-		}
+		},
+		preview: async function () {
+			const $ = utils,
+						config = JSON.parse(await $.read_path("./ani-conf.json"));
+			if (!config) return Promise.reject("No config found. Watch failed.");
+
+			try {
+				let animated_banners = await $.get_files_in("./banners/"),
+						failover_banners = await $.get_files_in("./assets/failovers/");
+
+				animated_banners = animated_banners.map((banner) => {
+					const newPath = banner.path.replace(/\.\/banners\//ig, "banners/"),
+								size = banner.layer_name.split(config.project)[1];
+					return banner = Object.assign(banner, {
+						path: newPath,
+						width: size.split("x")[0],
+						height: size.split("x")[1],
+					})
+				});
+
+				failover_banners = failover_banners.map((banner) => {
+					var newPath = banner.path.replace(/\.\/assets\//ig, "assets/")
+					return banner = Object.assign(banner, {path: newPath})
+				});
+
+				const templatePath = `${__dirname}/${$.paths.template.preview}`,
+							options = {
+								pretty: true,
+								filename: "index.html",
+							},
+							locals = {
+								banners: {
+									animated: animated_banners,
+									failovers: failover_banners,
+								},
+								pageTitle: config.project,
+							},
+							html = pug.renderFile(templatePath, Object.assign(options, locals));
+				await fs.writeFileAsync("./preview/index.html", html)
+				return Promise.resolve();
+			} catch(e) {
+				return Promise.reject("Cannot find banners.")
+			}
+		},
 	},
 	watch: async function() {
 		const config = await this.read_path("./ani-conf.json");
-
 		if (!config) return Promise.reject("No config found. Watch failed.")
 
 		browserSync.init({
@@ -120,9 +162,38 @@ const utils = {
 		browserSync.watch(this.paths.watch);
 		return Promise.resolve();
 	},
-	replaceString (source, pattern, newString) {
+	replace_string_regex (source, pattern, newString) {
 		const re = new RegExp(pattern, "g");
 		return source.replace(re, newString);
+	},
+	get_files_in: async function (filePath) {
+		try {
+			const files = await fs.readdirAsync(filePath);
+			let files_array = [];
+			for (let filename of files) {
+				if (filename && !this.is_hidden(filename)) { // we don't want hidden files
+					let layer_name = camel(filename.split('.')[0]);
+					files_array.push({
+						'filename' : filename,
+						"layer_name" : layer_name,
+						"path": filePath + filename,
+					});
+				}
+			}
+			return Promise.resolve(files_array);
+		} catch (e) {
+			return Promise.reject(`Problem getting files in ${filePath}`)
+		}
+	},
+	str_replace_in_files: async function (file_path, target, replacement) {
+		try {
+			let result = await fs.readFileAsync(file_path, "utf8");
+			result = result.replace(target, replacement);
+			await fs.writeFileAsync(file_path, result);
+			return Promise.resolve();
+		} catch (e) {
+			return Promise.reject(e);
+		}
 	},
 	build_directories: async function() {
 		for (let i = 0; i <= this.paths.build_directories.length; i++) {

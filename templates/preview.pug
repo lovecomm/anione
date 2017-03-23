@@ -19,13 +19,13 @@ html(lang="en")#anione-dev-html
 						h2 Static Banners
 						ul
 							each banner in banners.failovers
-								| <li><a href="#{banner.path}" class="gallery banner">#{banner.layerName}</a></li>
+								| <li><a href="#{banner.path}" class="gallery banner">#{banner.layer_name}</a></li>
 								|
 					if banners.animated.length > 0
 						h2 Animated Banners
 						ul
 							each banner in banners.animated
-								| <li><a class="html5 banner" href="#{banner.path}" data-featherlight="iframe" data-featherlight-iframe-width="160" data-featherlight-iframe-height="600">#{banner.layerName}</a></li>
+								| <li><a class="html5 banner" href="#{banner.path}" data-featherlight="iframe" data-featherlight-iframe-width="#{banner.width}" data-featherlight-iframe-height="#{banner.height}">#{banner.layer_name}</a></li>
 								|
 		footer
 		script(src="featherlight.js" type="text/javascript" charset="utf-8")
