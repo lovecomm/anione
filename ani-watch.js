@@ -1,9 +1,9 @@
 "use strict";
 
-const watch = require("./helpers/watch.js");
+const $ = require("./utils");
 
 exports.watch = async function () {
-	
+	$.watch();
 };
 
 exports.watch();
