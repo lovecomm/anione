@@ -4,6 +4,10 @@ const 	Promise = require("bluebird"),
 				fs = Promise.promisifyAll(require("fs")),
 				rimraf = Promise.promisify(require('rimraf')),
 				FolderZip = require('folder-zip'),
+				imagemin = require('imagemin'),
+				imageminMozjpeg = require('imagemin-mozjpeg'),
+				imageminPngcrush = require('imagemin-pngcrush'),
+				imageminGiflossy = require('imagemin-giflossy'),
 				$ = require("./utils");
 
 exports.handoff = async function () {
@@ -18,6 +22,17 @@ exports.handoff = async function () {
 		
 		if (handoff_path_exists) await rimraf(handoff_path);
 		await fs.mkdirAsync(handoff_path);
+
+		// statics failovers
+		await fs.mkdirAsync(`${handoff_path}/failovers`);
+		await imagemin([`./assets/images/*.{jpg,png,gif}`], `${handoff_path}/failovers`, {
+			plugins: [
+				imageminMozjpeg(),
+				imageminPngcrush(),
+				imageminGiflossy({lossy: 0}),
+			]
+		});	
+		// end statics failovers
 
 		for (let vendor_name in config.vendors)	{
 			const vendor_path = `${handoff_path}/${vendor_name}`;
@@ -38,7 +53,6 @@ exports.handoff = async function () {
 					await writeToFile(`${banner.path}.zip`);
 					await rimraf(banner.path)
 				} catch (e) {
-					console.log(e)
 					$.handle_error(`Failed to gather assets for or zip ${banner_info.filename}`);
 				}
 			}
@@ -52,8 +66,7 @@ exports.handoff = async function () {
 		await writeToFile(`${handoff_path}.zip`);
 		await rimraf(handoff_path);
 	} catch (e) {
-		console.log(e)
-		$.handle_error("Generation of handoff failed.")
+		$.handle_error(e, "Generation of handoff failed.")
 	}
 };
 

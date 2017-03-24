@@ -37,7 +37,7 @@ exports.stage = async function () {
 			await fs.writeFileAsync("./ani-conf.json", JSON.stringify(config, null, 2));
 			handleRsync(rsyncOptions);
 		} catch(e) {
-			$.handle_error("Rsync setup failed.");
+			$.handle_error(e, "Rsync setup failed.");
 		}
 
 	} else {

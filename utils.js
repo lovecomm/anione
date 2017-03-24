@@ -8,7 +8,8 @@ const Promise = require("bluebird"),
 			colors = require("colors"),
 			imagemin = require('imagemin'),
 			imageminMozjpeg = require('imagemin-mozjpeg'),
-			imageminPngquant = require('imagemin-pngquant'),
+			imageminPngcrush = require('imagemin-pngcrush'),
+			imageminGiflossy = require('imagemin-giflossy'),
 			browserSync = require('browser-sync').create();
 
 const utils = {
@@ -78,10 +79,11 @@ const utils = {
 				}
 			}
 			if (copy) {
-				await imagemin(["./assets/images/*.{jpg,png}"], destination, {
+				await imagemin([`./assets/images/*-${size}.{jpg,png,gif}`], destination, {
 					plugins: [
 						imageminMozjpeg(),
-        		imageminPngquant({quality: '65-80'})
+						imageminPngcrush(),
+						imageminGiflossy({lossy: 0}),
 					]
 				});
 			}
@@ -133,14 +135,10 @@ const utils = {
 							locals = {
 								banners: banner_files,
 								scrubber: scrubber
-							}
-				let html = pug.renderFile(templatePath, Object.assign(options, locals));
-				// html = $.replace_string_regex(html, "&quot;", '"')
-				// html = $.replace_string_regex(html, "&gt;", '>')
-				// console.log(html);
+							},
+							html = pug.renderFile(templatePath, Object.assign(options, locals));
 				await fs.writeFileAsync("./index.html", html);
 			} catch (e) {
-				console.log(e)
 				return Promise.reject("Failed to process development template.")
 			}
 		},

@@ -23,7 +23,7 @@ exports.preview = async function () {
 			)
 		}
 	} catch(e) {
-		$.handle_error("Failed to generate preview.")
+		$.handle_error(e, "Failed to generate preview.")
 	}
 }; 
 
