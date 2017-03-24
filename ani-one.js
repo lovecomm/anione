@@ -12,8 +12,8 @@ exports.one = async function () {
 
 	try {
 		const image_list = await $.get_images_for(config.sizes[0]);
-		await $.processTemplates.banner(config, image_list);
-		await $.processTemplates.dev();
+		await $.process_templates.banner(config, image_list);
+		await $.process_templates.dev();
 		await $.watch();
 	} catch (e) {
 		$.handle_error(e, "Failed to generate first banner.")

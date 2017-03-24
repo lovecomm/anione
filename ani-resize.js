@@ -44,7 +44,7 @@ exports.resize = async function () {
 			await fs.writeFileAsync(`./banners/${config.project}-${banner.size}.html`, banner.file)
 		}
 	}
-	await $.processTemplates.dev();
+	await $.process_templates.dev();
 	$.watch();
 };
 

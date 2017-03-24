@@ -12,7 +12,7 @@ exports.preview = async function () {
 		await fs.copyAsync(__dirname + "/assets/preview/", "./preview");
 		await fs.copyAsync("./banners/", "./preview/banners");
 		await fs.copyAsync("./assets/", "./preview/assets");
-		await $.processTemplates.preview();
+		await $.process_templates.preview();
 		const banner_files = await fs.readdirAsync("./preview/banners/");
 
 		for (let banner_file of banner_files) {

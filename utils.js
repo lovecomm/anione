@@ -1,7 +1,7 @@
 "use strict";
 
 const Promise = require("bluebird"),
-			fs = Promise.promisifyAll(require("fs")),
+			fs = Promise.promisifyAll(require("fs-extra")),
 			camel = require('to-camel-case'),
 			toTitleCase = require('titlecase'),
 			pug = require("pug"),
@@ -30,15 +30,27 @@ const utils = {
 			return Promise.resolve(false)
 		}
 	},
-	vendorify: async function(config, banner, vendor_name, vendor_path) {
+	vendorify: async function(config, banner_info, vendor_name, vendor_path) {
 		const vendor = config.vendors[vendor_name],
-					size = banner.layer_name.split(config.project)[1],
+					size = banner_info.layer_name.split(config.project)[1],
 					destPath = "./" + config.project + "-handoff/" + vendor_name + "/" + config.project + "-" + size,
 					source_path = "./banners/" + config.project + "-" + size + ".html";
-		
+
 		try {
 			let source = await fs.readFileAsync(source_path, "utf8");
-			
+			source = this.replace_string_regex(source, "<!-- ANIONE: vendorScriptHeader -->", vendor.scriptHeader)
+			source = this.replace_string_regex(source, "<!-- ANIONE: vendorScriptFooter -->", vendor.scriptFooter)
+			source = this.replace_string_regex(source, "#ANIONE:vendorLink", vendor.link)
+			source = this.replace_string_regex(source, "../assets/images/", "")
+			source = this.replace_string_regex(source, "../assets/libs-css/", "")
+			source = this.replace_string_regex(source, "../assets/libs-js/", "")
+			source = source.replace(/return \(function\(\) \{/, '(function() {')
+
+			return Promise.resolve({
+				file: source,
+				path: destPath,
+				size: size,
+			});
 		} catch (e) {
 			return Promise.reject("Failed to vendorify.\nBanner: ${banner.filename}.\nVendor: ${vendor_name}.")
 		}
@@ -60,7 +72,7 @@ const utils = {
 							"layer_name" : layer_name}
 						);
 
-						if(copy) await fs.copyAsync("./assets/images/" + filename, destination + filename);
+						if (copy) await fs.copyAsync("./assets/images/" + filename, destination + filename);
 					}
 				}
 			}
@@ -69,7 +81,7 @@ const utils = {
 			return Promise.reject("Problem finding image assets.")
 		}
 	},
-	processTemplates: {
+	process_templates: {
 		banner: async function (config, image_list) {
 			const $ = utils;
 			const banner_file = await $.read_path(`./banners/${config.project}-${config.sizes[0]}.html`),
@@ -198,6 +210,14 @@ const utils = {
 			return Promise.reject(`Problem getting files in ${filePath}`)
 		}
 	},
+	copy_files_in: async function (srcPath, targetPath) {
+		try {
+			await fs.copyAsync(srcPath, targetPath);
+			return Promise.resolve();
+		} catch (e) {
+			return Promise.reject(`Problem copying files from ${srcPath} to ${targetPath}.`);
+		}
+ 	},
 	str_replace_in_files: async function (file_path, target, replacement) {
 		try {
 			let result = await fs.readFileAsync(file_path, "utf8");
