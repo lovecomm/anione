@@ -5,6 +5,7 @@ const 	Promise = require("bluebird"),
 				rimraf = Promise.promisify(require('rimraf')),
 				FolderZip = require('folder-zip'),
 				imagemin = require('imagemin'),
+				colors = require("colors"),
 				imageminMozjpeg = require('imagemin-mozjpeg'),
 				imageminPngcrush = require('imagemin-pngcrush'),
 				imageminGiflossy = require('imagemin-giflossy'),
@@ -24,14 +25,23 @@ exports.handoff = async function () {
 		await fs.mkdirAsync(handoff_path);
 
 		// statics failovers
-		await fs.mkdirAsync(`${handoff_path}/failovers`);
-		await imagemin([`./assets/images/*.{jpg,png,gif}`], `${handoff_path}/failovers`, {
-			plugins: [
-				imageminMozjpeg(),
-				imageminPngcrush(),
-				imageminGiflossy({lossy: 0}),
-			]
-		});	
+		try {
+			let failover_files = await $.read_dir("./assets/failovers");
+			if (failover_files) {
+				await fs.mkdirAsync(`${handoff_path}/failovers`);
+				await imagemin([`./assets/images/*.{jpg,png,gif}`], `${handoff_path}/failovers`, {
+					plugins: [
+						imageminMozjpeg(),
+						imageminPngcrush(),
+						imageminGiflossy({lossy: 0}),
+					]
+				});	
+			} else {
+			$.handle_notice("No failover files found. As such, none will be added to the handoff.");
+			}
+		} catch (e) {
+			$.handle_notice("No failover files found. As such, none will be added to the handoff.");
+		}
 		// end statics failovers
 
 		for (let vendor_name in config.vendors)	{
@@ -52,11 +62,18 @@ exports.handoff = async function () {
 					await zipFolder(banner.path, {excludeParentFolder: true});
 					await writeToFile(`${banner.path}.zip`);
 					await rimraf(banner.path)
+					
 				} catch (e) {
 					$.handle_error(`Failed to gather assets for or zip ${banner_info.filename}`);
 				}
 			}
 		}
+
+		const libs_css = await $.read_dir("./assets/libs-css/"),
+					libs_js = await $.read_dir("./assets/libs-js/");
+
+		if(!libs_css) $.handle_notice("No files found in 'assets/libs_css'. As such no global css (library) files were added to each banner.");
+		if(!libs_js) $.handle_notice("No files found in 'assets/libs_js'. As such no global js (library) files were added to each banner.");
 
 		const zip = Promise.promisifyAll(new FolderZip()),
 					zipFolder = Promise.promisify(zip.zipFolder, {context: zip}),
@@ -66,6 +83,7 @@ exports.handoff = async function () {
 		await writeToFile(`${handoff_path}.zip`);
 		await rimraf(handoff_path);
 	} catch (e) {
+		console.log(e)
 		$.handle_error(e, "Generation of handoff failed.")
 	}
 };

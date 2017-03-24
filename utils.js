@@ -17,8 +17,11 @@ const utils = {
 		if(typeof(e) !== "string") e = default_message;
 		console.error(colors.red(`Error! ${e}`));
 	},
+	handle_notice(message) {
+		console.log(colors.yellow(`Notice: ${message}`));
+	},
 	handle_success(message) {
-		console.log(colors.green(message));
+		console.log(colors.green(`Success! ${message}`));
 	},
 	is_hidden (filename) {
 		if (/^\./.test(filename)) {
@@ -32,6 +35,19 @@ const utils = {
 			return Promise.resolve(await fs.readFileAsync(filePath, "utf8"));
 		} catch (e) {
 			return Promise.resolve(false)
+		}
+	},
+	read_dir: async function(dirPath) {
+		try {
+			let files = await fs.readdirAsync(dirPath, {hidden: true});
+			files = files.filter((file) => file !== ".DS_Store");
+			if (files.length > 0) {
+				return Promise.resolve(files);
+			} else {
+				return Promise.resolve(false);
+			}
+		} catch(e) {
+			return Promise.resolve(false);
 		}
 	},
 	vendorify: async function(config, banner_info, vendor_name, vendor_path) {
@@ -111,7 +127,7 @@ const utils = {
 						},
 						html = pug.renderFile(templatePath, Object.assign(options, locals));
 
-			if (banner_file) return console.warn(colors.yellow(`Your first banner, ${config.project}-${config.sizes[0]} already exists. You can regenerate it from the template by deleting ${config.project}-${config.sizes[0]}.html and running 'ani one' again.`));
+			if (banner_file) return $.handle_notice(`Your first banner, ${config.project}-${config.sizes[0]} already exists. You can regenerate it from the template by deleting ${config.project}-${config.sizes[0]}.html and running 'ani one' again.`);
 
 			try {
 				locals.scripts = await fs.readdirAsync($.paths.directories.scripts);
@@ -227,9 +243,15 @@ const utils = {
 	},
 	copy_files_in: async function (srcPath, targetPath) {
 		try {
-			await fs.copyAsync(srcPath, targetPath);
-			return Promise.resolve();
+			let srcFiles = await this.read_dir(srcPath);
+			if (srcFiles) {
+				await fs.copyAsync(srcPath, targetPath);
+				return Promise.resolve(true);
+			} else {
+				return Promise.resolve(false);
+			}
 		} catch (e) {
+			console.log(e);
 			return Promise.reject(`Problem copying files from ${srcPath} to ${targetPath}.`);
 		}
  	},
@@ -251,7 +273,7 @@ const utils = {
 					const directoryStat = await this.read_path(directory);
 					if (!directoryStat) await fs.mkdirAsync(directory);
 				} catch (e) {
-					return console.warn(colors.yellow(`Couldn't create project directory, ${directory}`));
+					return this.handle_notice(`Couldn't create project directory, ${directory}`);
 				}
 			}
 		}

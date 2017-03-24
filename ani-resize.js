@@ -21,7 +21,7 @@ exports.resize = async function () {
 		for (let size of config.sizes) {
 			if (size != first_banner.size) {
 				let banner_file = await $.read_path(`./banners/${config.project}-${size}.html`);
-				if (banner_file) console.warn(colors.yellow(`The banner, ${config.project}-${size}.html already exists so it will not be regenerated. To regenerate it, delete the file and re-run 'ani resize'`));
+				if (banner_file) $.handle_notice(`The banner, ${config.project}-${size}.html already exists so it will not be regenerated. To regenerate it, delete the file and re-run 'ani resize'`);
 
 				let banner = {
 					size: size,

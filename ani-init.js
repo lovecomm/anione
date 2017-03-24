@@ -55,9 +55,9 @@ let 	vendors = (async () => await $.read_path(__dirname + "/assets/conf-options/
 exports.init = async function () {
 	const config_file = await $.read_path("./ani-conf.json"),
 				readme_file = await $.read_path("./README.md"),
-				scrubber_file = await $.read_path("./README.md");
+				gitignore_file = await $.read_path("./.gitignore");
 
-	if (config_file) return console.warn(colors.yellow("Your project has already been initialized. To re-initialize, first delete ani-conf.json."));
+	if (config_file) return $.handle_notice("Your project has already been initialized. To re-initialize, first delete ani-conf.json.");
 
 	try {
 		await $.build_directories();
@@ -72,6 +72,9 @@ exports.init = async function () {
 
 		// Copy README file to project instance
 		if (!readme_file) fs.createReadStream(__dirname + `/README.md`).pipe(fs.createWriteStream("./README.md"));
+
+		// Create gitignore
+		if (!gitignore_file) await fs.writeFileAsync("./.gitignore", "node_modules");
 
 	} catch (e) {
 		$.handle_error(e, "Failed to generate config.")
