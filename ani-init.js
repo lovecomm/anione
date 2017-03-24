@@ -73,9 +73,6 @@ exports.init = async function () {
 		// Copy README file to project instance
 		if (!readme_file) fs.createReadStream(__dirname + `/README.md`).pipe(fs.createWriteStream("./README.md"));
 
-		// Copy scrubber.js file to project instance
-		if (!scrubber_file) fs.createReadStream(__dirname + `/assets/scrubber.js`) .pipe(fs.createWriteStream("./.anione/scrubber.js"));
-
 	} catch (e) {
 		$.handle_error(e, "Failed to generate config.")
 	}

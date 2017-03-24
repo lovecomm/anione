@@ -13,8 +13,10 @@ exports.handoff = async function () {
 
 	try {
 		const banner_files = await $.get_files_in("./banners/"),
-					handoff_path = "./" + config.project + "-handoff";
-
+					handoff_path = "./" + config.project + "-handoff",
+					handoff_path_exists = $.read_path(handoff_path);
+		
+		if (handoff_path_exists) await rimraf(handoff_path);
 		await fs.mkdirAsync(handoff_path);
 
 		for (let vendor_name in config.vendors)	{
@@ -25,9 +27,8 @@ exports.handoff = async function () {
 				try {
 					const zip = Promise.promisifyAll(new FolderZip()),
 								zipFolder = Promise.promisify(zip.zipFolder, {context: zip}),
-								writeToFile = Promise.promisify(zip.writeToFile, {context: zip});
-
-					const banner = await $.vendorify(config, banner_info, vendor_name, vendor_path);
+								writeToFile = Promise.promisify(zip.writeToFile, {context: zip}),
+								banner = await $.vendorify(config, banner_info, vendor_name, vendor_path);
 					await fs.mkdirAsync(banner.path);
 					await fs.writeFileAsync(`${banner.path}/index.html`, banner.file);
 					await $.get_images_for(banner.size, true, banner.path + "/");
@@ -49,7 +50,7 @@ exports.handoff = async function () {
 		
 		await zipFolder(handoff_path, {excludeParentFolder: true});
 		await writeToFile(`${handoff_path}.zip`);
-		await rimraf(handoff_path)
+		await rimraf(handoff_path);
 	} catch (e) {
 		console.log(e)
 		$.handle_error("Generation of handoff failed.")

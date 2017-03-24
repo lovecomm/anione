@@ -21,7 +21,7 @@ html(lang="en")
 				overflow: hidden;
 				background-repeat: no-repeat;
 				z-index: 1000;
-				border: 1px inset black;
+				border: 1px solid black;
 				box-sizing: border-box;
 				-moz-box-sizing: border-box;
 				-webkit-box-sizing: border-box;
@@ -56,6 +56,7 @@ html(lang="en")
 			| var tl = new TimelineMax();
 			| var h = #{height}; // Banner's height
 			| var w = #{width}; // Banner's width
+			| var banner = document.getElementById('bannerLink');
 			|
 			each image in images
 				| var #{image.layer_name} = document.getElementById("#{image.layer_name}");

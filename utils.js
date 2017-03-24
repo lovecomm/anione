@@ -6,6 +6,9 @@ const Promise = require("bluebird"),
 			toTitleCase = require('titlecase'),
 			pug = require("pug"),
 			colors = require("colors"),
+			imagemin = require('imagemin'),
+			imageminMozjpeg = require('imagemin-mozjpeg'),
+			imageminPngquant = require('imagemin-pngquant'),
 			browserSync = require('browser-sync').create();
 
 const utils = {
@@ -38,13 +41,13 @@ const utils = {
 
 		try {
 			let source = await fs.readFileAsync(source_path, "utf8");
-			source = this.replace_string_regex(source, "<!-- ANIONE: vendorScriptHeader -->", vendor.scriptHeader)
-			source = this.replace_string_regex(source, "<!-- ANIONE: vendorScriptFooter -->", vendor.scriptFooter)
-			source = this.replace_string_regex(source, "#ANIONE:vendorLink", vendor.link)
-			source = this.replace_string_regex(source, "../assets/images/", "")
-			source = this.replace_string_regex(source, "../assets/libs-css/", "")
-			source = this.replace_string_regex(source, "../assets/libs-js/", "")
-			source = source.replace(/return \(function\(\) \{/, '(function() {')
+			source = this.replace_string_regex(source, "<!-- ANIONE: vendorScriptHeader -->", vendor.scriptHeader);
+			source = this.replace_string_regex(source, "<!-- ANIONE: vendorScriptFooter -->", vendor.scriptFooter);
+			source = this.replace_string_regex(source, "#ANIONE:vendorLink", vendor.link);
+			source = this.replace_string_regex(source, "../assets/images/", "");
+			source = this.replace_string_regex(source, "../assets/libs-css/", "");
+			source = this.replace_string_regex(source, "../assets/libs-js/", "");
+			source = source.replace(/return \(function\(\) \{/, '(function() {');
 
 			return Promise.resolve({
 				file: source,
@@ -71,13 +74,20 @@ const utils = {
 							'filename' : filename,
 							"layer_name" : layer_name}
 						);
-
-						if (copy) await fs.copyAsync("./assets/images/" + filename, destination + filename);
 					}
 				}
 			}
+			if (copy) {
+				await imagemin(["./assets/images/*.{jpg,png}"], destination, {
+					plugins: [
+						imageminMozjpeg(),
+        		imageminPngquant({quality: '65-80'})
+					]
+				});
+			}
 			return Promise.resolve(img_array);
 		} catch (e) {
+			console.log(e)
 			return Promise.reject("Problem finding image assets.")
 		}
 	},
@@ -114,16 +124,23 @@ const utils = {
 			const $ = utils;
 			try {
 				const banner_files = await fs.readdirAsync("./banners/"),
+							scrubber = await $.read_path(`${__dirname}/assets/scrubber.js`),
 							templatePath = `${__dirname}/${$.paths.template.dev}`,
 							options = {
 								pretty: true,
 								filename: "index.html",
 							},
-							locals = { banners: banner_files },
-							html = pug.renderFile(templatePath, Object.assign(options, locals));
-							
+							locals = {
+								banners: banner_files,
+								scrubber: scrubber
+							}
+				let html = pug.renderFile(templatePath, Object.assign(options, locals));
+				// html = $.replace_string_regex(html, "&quot;", '"')
+				// html = $.replace_string_regex(html, "&gt;", '>')
+				// console.log(html);
 				await fs.writeFileAsync("./index.html", html);
 			} catch (e) {
+				console.log(e)
 				return Promise.reject("Failed to process development template.")
 			}
 		},
@@ -245,7 +262,6 @@ const utils = {
 	paths: {
 		build_directories: [ // these are the directories that are generated during `ani init`
 			"./assets",
-			"./.anione",
 			"./assets/failovers",
 			"./assets/images",
 			"./assets/libs-js",
