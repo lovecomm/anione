@@ -17,7 +17,7 @@ const 	Promise = require("bluebird"),
 							}
 						}, {
 							type: "checkbox",
-							message: "Select Banner Sizes. If you do not see all of the required sizes for your project here, you can add them after the project initialization by running `ani size -a widthXHeight`, or by editing ani-conf.js directly.\n",
+							message: "Select Banner Sizes. If you do not see all of the required sizes for your project here, you can add them after the project initialization by editing ani-conf.js directly.\n",
 							name: "sizes",
 							choices: sizes,
 							validate: (answer) => {
@@ -26,7 +26,7 @@ const 	Promise = require("bluebird"),
 							}
 						}, {
 							type: "checkbox",
-							message: "Select Vendors. If you do not see all of the required sizes for your project here, you can add them after the project initialization by running `ani vendor -a vendorName`, or by editing ani-conf.js directly.\n",
+							message: "Select Vendors. If you do not see all of the required sizes for your project here, you can add them after the project initialization by editing ani-conf.js directly.\n",
 							name: "vendors",
 							choices: Object.keys(vendors),
 							validate: (answer) => {
@@ -74,7 +74,7 @@ exports.init = async function () {
 		if (!readme_file) fs.createReadStream(__dirname + `/README.md`).pipe(fs.createWriteStream("./README.md"));
 
 		// Create gitignore
-		if (!gitignore_file) await fs.writeFileAsync("./.gitignore", "node_modules");
+		if (!gitignore_file) await fs.writeFileAsync("./.gitignore", "node_modules\n*-handoff\n*-handoff.zip\npreview");
 
 	} catch (e) {
 		$.handle_error(e, "Failed to generate config.")
