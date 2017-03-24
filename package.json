@@ -1,17 +1,14 @@
 {
   "name": "anione",
   "version": "1.0.0",
-  "description": "An NPM modules to ease the repetitiveness that comes with coding HTML5 banner ads.",
+  "description": "An NPM module to ease the repetitiveness that comes with coding HTML5 banner ads.",
   "main": "index.js",
   "bin": {
     "ani": "./index.js"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/logancalldev/anione.git"
+    "url": "git+https://github.com/lovecomm/anione.git"
   },
   "keywords": [
     "HTML5-Banner-ads"
@@ -19,9 +16,9 @@
   "author": "Logan Call",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/logancalldev/anione/issues"
+    "url": "https://github.com/lovecomm/anione/issues"
   },
-  "homepage": "https://github.com/logancalldev/anione#readme",
+  "homepage": "https://github.com/lovecomm/anione#readme",
   "dependencies": {
     "bluebird": "^3.5.0",
     "browser-sync": "^2.18.8",
