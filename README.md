@@ -17,6 +17,7 @@ An NPM modules to ease the repetitiveness that comes with coding HTML5 banner ad
 ## Asset naming conventions
 ### Layers for HTML5 Banners
 These are images that you'll use within the HTML5 banners. Be sure that each banner has it's own images. Even if banners use the same image, each banner will need their own. Place all of these images in **assets/images/** during development. These will be copied into each individual banner directory when you run the **handoff** command. To work with anione, name them as follows: **layername-size.extension** (Example: cta-300x600.png)
+
 ### Failover/static backups
 These are often used by vendors as failovers when HTML5 banners aren't able to load in a visitors browser. To work an anione, you'll want to put them within the **assets/failovers/** dir, and name them as follows: **project-size.extension** (Example: anionelaunch-300x600.png)
 
