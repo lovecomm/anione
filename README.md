@@ -2,13 +2,13 @@
 An NPM modules to ease the repetitiveness that comes with coding HTML5 banner ads.
 
 ## Commands:
-* init        Builds Anione project directory structure and config.
-* one         Generates first banner from template.
-* resize      Resize your first banner into all remaining sizes selected during configuration. These can also be found in your ani-conf.json file.
-* watch       Run a BrowserSync server to watch the banners and launch the generated index.html
-* preview     Generate a drag n' drop preview webpage to showcase the banners.
-* stage       Via rsync, copy preview to a stage server to showcase the banners.
-* handoff     Zip/Package/Compress the Banner-Ads for ad-network delivery.
+* *init* – Builds Anione project directory structure and config.
+* *one* – Generates first banner from template.
+* *resize* – Resize your first banner into all remaining sizes selected during configuration. These can also be found in your ani-conf.json file.
+* *watch* - Run a BrowserSync server to watch the banners and launch the generated index.html
+* *preview* - Generate a drag n' drop preview webpage to showcase the banners.
+* *stage* - Via rsync, copy preview to a stage server to showcase the banners.
+* *handoff* - Zip/Package/Compress the Banner-Ads for ad-network delivery.
 
 ## Options:
 * -h, --help     output usage information
