@@ -1,6 +1,6 @@
 {
   "name": "anione",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "An NPM module to ease the repetitiveness that comes with coding HTML5 banner ads.",
   "main": "index.js",
   "bin": {
