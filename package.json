@@ -1,7 +1,7 @@
 {
   "name": "anione",
-  "version": "1.0.5",
-  "description": "An NPM module to ease the repetitiveness that comes with coding HTML5 banner ads.",
+  "version": "1.0.6",
+  "description": "A CLI (NPM) tool to ease the repetitiveness that comes with coding HTML5 banner ads.",
   "main": "index.js",
   "bin": {
     "ani": "./index.js"
@@ -11,7 +11,19 @@
     "url": "git+https://github.com/lovecomm/anione.git"
   },
   "keywords": [
-    "HTML5-Banner-ads"
+    "HTML5 Banner ads",
+		"banners",
+		"HTML5 Banners",
+		"advertising",
+		"banner generator",
+		"GSAP Greensock animation",
+		"Timeline scrubber"
+		"HTML animation",
+		"CLI tool",
+		"Browsersync",
+		"Image optimization",
+		"Preview generator",
+		"Project packaging",
   ],
   "author": "Logan Call",
   "license": "MIT",
