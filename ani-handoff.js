@@ -13,7 +13,7 @@ const 	Promise = require("bluebird"),
 
 exports.handoff = async function () {
 	const config = JSON.parse(await $.read_path("./ani-conf.json")),
-				first_banner_file = await $.read_path(`./banners/${config.project}-${config.sizes[0]}.html`);
+				first_banner_file = await $.read_path(`./banners/${config.sizes[0]}.html`);
 	if (!config || !first_banner_file) return $.handle_error("No project found, please run 'ani init' and 'ani one' to start your project.");
 
 	try {
@@ -24,12 +24,12 @@ exports.handoff = async function () {
 		if (handoff_path_exists) await rimraf(handoff_path);
 		await fs.mkdirAsync(handoff_path);
 
-		// statics failovers
+		// statics
 		try {
-			let failover_files = await $.read_dir("./assets/failovers");
-			if (failover_files) {
-				await fs.mkdirAsync(`${handoff_path}/failovers`);
-				await imagemin([`./assets/images/*.{jpg,png,gif}`], `${handoff_path}/failovers`, {
+			let static_files = await $.read_dir("./assets/statics");
+			if (static_files) {
+				await fs.mkdirAsync(`${handoff_path}/statics`);
+				await imagemin([`./assets/images/*.{jpg,png,gif}`], `${handoff_path}/statics`, {
 					plugins: [
 						imageminMozjpeg(),
 						imageminPngcrush(),
@@ -37,12 +37,12 @@ exports.handoff = async function () {
 					]
 				});	
 			} else {
-			$.handle_notice("No failover files found. As such, none will be added to the handoff.");
+			$.handle_notice("No static files found. As such, none will be added to the handoff.");
 			}
 		} catch (e) {
-			$.handle_notice("No failover files found. As such, none will be added to the handoff.");
+			$.handle_notice("No static files found. As such, none will be added to the handoff.");
 		}
-		// end statics failovers
+		// end statics
 
 		for (let vendor_name in config.vendors)	{
 			const vendor_path = `${handoff_path}/${vendor_name}`;

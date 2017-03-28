@@ -74,7 +74,7 @@ exports.init = async function () {
 		if (!readme_file) fs.createReadStream(__dirname + `/README.md`).pipe(fs.createWriteStream("./README.md"));
 
 		// Create gitignore
-		if (!gitignore_file) await fs.writeFileAsync("./.gitignore", "node_modules\n*-handoff\n*-handoff.zip\npreview");
+		if (!gitignore_file) await fs.writeFileAsync("./.gitignore", "node_modules\n*-handoff\n*-handoff.zip\npreview\n_creative");
 
 	} catch (e) {
 		$.handle_error(e, "Failed to generate config.")

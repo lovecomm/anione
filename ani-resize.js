@@ -11,7 +11,7 @@ exports.resize = async function () {
 
 	try {
 		const first_banner = {
-			file: await $.read_path(`./banners/${config.project}-${config.sizes[0]}.html`),
+			file: await $.read_path(`./banners/${config.sizes[0]}.html`),
 			size: config.sizes[0],
 			width: config.sizes[0].split("x")[0],
 			height: config.sizes[0].split("x")[1],
@@ -20,8 +20,8 @@ exports.resize = async function () {
 
 		for (let size of config.sizes) {
 			if (size != first_banner.size) {
-				let banner_file = await $.read_path(`./banners/${config.project}-${size}.html`);
-				if (banner_file) $.handle_notice(`The banner, ${config.project}-${size}.html already exists so it will not be regenerated. To regenerate it, delete the file and re-run 'ani resize'`);
+				let banner_file = await $.read_path(`./banners/${size}.html`);
+				if (banner_file) $.handle_notice(`The banner, ${size}.html already exists so it will not be regenerated. To regenerate it, delete the file and re-run 'ani resize'`);
 
 				let banner = {
 					size: size,
@@ -42,7 +42,7 @@ exports.resize = async function () {
 				banner.file = $.replace_string_regex(banner.file, "var w = " + first_banner.width , "var w = " + banner.width);
 				banner.file = $.replace_string_regex(banner.file, "var h = " + first_banner.height , "var h = " + banner.height);
 
-				await fs.writeFileAsync(`./banners/${config.project}-${banner.size}.html`, banner.file)
+				await fs.writeFileAsync(`./banners/${banner.size}.html`, banner.file)
 			}
 		}
 		await $.process_templates.dev();

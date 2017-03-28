@@ -52,9 +52,9 @@ const utils = {
 	},
 	vendorify: async function(config, banner_info, vendor_name, vendor_path) {
 		const vendor = config.vendors[vendor_name],
-					size = banner_info.layer_name.split(config.project)[1],
-					destPath = "./" + config.project + "-handoff/" + vendor_name + "/" + config.project + "-" + size,
-					source_path = "./banners/" + config.project + "-" + size + ".html";
+					size = banner_info.layer_name,
+					destPath = "./" + config.project + "-handoff/" + vendor_name + "/" + size,
+					source_path = "./banners/" + size + ".html";
 
 		try {
 			let source = await fs.readFileAsync(source_path, "utf8");
@@ -112,7 +112,7 @@ const utils = {
 	process_templates: {
 		banner: async function (config, image_list) {
 			const $ = utils;
-			const banner_file = await $.read_path(`./banners/${config.project}-${config.sizes[0]}.html`),
+			const banner_file = await $.read_path(`./banners/${config.sizes[0]}.html`),
 						templatePath = `${__dirname}/${$.paths.template.banner}`,
 						options = {
 							pretty: true,
@@ -123,16 +123,16 @@ const utils = {
 							imgPath: $.paths.directories.images,
 							width: config.sizes[0].split("x")[0],
 							height: config.sizes[0].split("x")[1],
-							pageTitle: `${toTitleCase(config.project)}-${config.sizes[0]}`,
+							pageTitle: config.sizes[0],
 						},
 						html = pug.renderFile(templatePath, Object.assign(options, locals));
 
-			if (banner_file) return $.handle_notice(`Your first banner, ${config.project}-${config.sizes[0]} already exists. You can regenerate it from the template by deleting ${config.project}-${config.sizes[0]}.html and running 'ani one' again.`);
+			if (banner_file) return $.handle_notice(`Your first banner, ${config.sizes[0]} already exists. You can regenerate it from the template by deleting ${config.sizes[0]}.html and running 'ani one' again.`);
 
 			try {
 				locals.scripts = await fs.readdirAsync($.paths.directories.scripts);
 				locals.styles = await fs.readdirAsync($.paths.directories.styles);
-				await fs.writeFileAsync(`./banners/${config.project}-${config.sizes[0]}.html`, html);
+				await fs.writeFileAsync(`./banners/${config.sizes[0]}.html`, html);
 				return Promise.resolve();
 			} catch (e) {
 				return Promise.reject("Failed to process banner template.")
@@ -165,7 +165,7 @@ const utils = {
 
 			try {
 				let animated_banners = await $.get_files_in("./banners/"),
-						failover_banners = await $.get_files_in("./assets/failovers/");
+						static_banners = await $.get_files_in("./assets/statics/");
 
 				animated_banners = animated_banners.map((banner) => {
 					const newPath = banner.path.replace(/\.\/banners\//ig, "banners/"),
@@ -177,7 +177,7 @@ const utils = {
 					})
 				});
 
-				failover_banners = failover_banners.map((banner) => {
+				static_banners = static_banners.map((banner) => {
 					var newPath = banner.path.replace(/\.\/assets\//ig, "assets/")
 					return banner = Object.assign(banner, {path: newPath})
 				});
@@ -190,7 +190,7 @@ const utils = {
 							locals = {
 								banners: {
 									animated: animated_banners,
-									failovers: failover_banners,
+									statics: static_banners,
 								},
 								pageTitle: config.project,
 							},
@@ -282,7 +282,7 @@ const utils = {
 	paths: {
 		build_directories: [ // these are the directories that are generated during `ani init`
 			"./assets",
-			"./assets/failovers",
+			"./assets/statics",
 			"./assets/images",
 			"./assets/libs-js",
 			"./assets/libs-css",

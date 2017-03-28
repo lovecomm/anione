@@ -11,14 +11,14 @@ html(lang="en")#anione-dev-html
 			h1 #{pageTitle}-Banners
 		div.wrapper
 			div.main
-				if banners.failovers.length > 0
+				if banners.statics.length > 0
 					if banners.animated.length > 0
 						p.disclaimer The <strong>Static Banners</strong> will open in a gallery like fashion, where you can click through each of them within the lightbox. However, the <strong>Animated Banners</strong> will have to be opened individually, but will still load in a&nbsp;lightbox.
 				div.animated
-					if banners.failovers.length > 0
+					if banners.statics.length > 0
 						h2 Static Banners
 						ul
-							each banner in banners.failovers
+							each banner in banners.statics
 								| <li><a href="#{banner.path}" class="gallery banner">#{banner.layer_name}</a></li>
 								|
 					if banners.animated.length > 0

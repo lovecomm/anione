@@ -26,20 +26,20 @@ Anione is all about making the development experience of HTML5 banner animation 
 ## Asset naming conventions
 
 ### Layers for HTML5 Banners
-These are images that you'll use within the HTML5 banners. Be sure that each banner has it's own images. Even if banners use the same image, each banner will need their own. Place all of these images in **assets/images/** during development. These will be copied into each individual banner directory when you run the **handoff** command. To work with anione, name them as follows: **layername-size.extension** (Example: cta-300x600.png).
+These are images that you'll use within the HTML5 banners. Be sure that each banner has it's own images. Even if banners use the same image, each banner will need their own. Place all of these images in **assets/images/** during development. These will be copied into each individual banner directory when you run the **handoff** command. To work with anione, name them as follows: **layername-size.extension** (Example: cta-300x600.png). Checkout this [Photoshop script](https://github.com/lovecomm/PSD-anione-export-scripts) to export image layers quickly.
 
-### Failover/static backups
-These are often used by vendors as failovers when HTML5 banners aren't able to load in a visitors browser. To work an anione, you'll want to put them within the **assets/failovers/** dir, and name them as follows: **project-size.extension** (Example: anionelaunch-300x600.png).
+### Static backups
+These are often used by vendors as statics when HTML5 banners aren't able to load in a visitors browser. To work an anione, you'll want to put them within the **assets/statics/** dir, and name them as follows: **size-static.extension** (Example: 300x600-static.png). Checkout this [Photoshop script](https://github.com/lovecomm/PSD-anione-export-scripts) to export static backups quickly.
 
 ## CSS & JS Libraries
-You're more than welcome to use custom CSS & JS libraries with your project. In fact anything within the **assets/libs-css/** and **assets/libs-js/** directories will be copied into each banner during handoff generation.
+You're more than welcome to use custom CSS & JS libraries with your project. In fact anything within the **assets/libs-css/** and **assets/libs-js/** directories will be copied into each banner during handoff generation. 
 
 ## Generated Project Structure
 * ani-conf.json
 * README.md
 * .gitignore
 * assets
-	* failovers
+	* statics
 		* (project-size.jpg)
 		* (project-size.png)
 		...
