@@ -17,13 +17,13 @@
 		"advertising",
 		"banner generator",
 		"GSAP Greensock animation",
-		"Timeline scrubber"
+		"Timeline scrubber",
 		"HTML animation",
 		"CLI tool",
 		"Browsersync",
 		"Image optimization",
 		"Preview generator",
-		"Project packaging",
+		"Project packaging"
   ],
   "author": "Logan Call",
   "license": "MIT",
