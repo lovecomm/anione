@@ -88,13 +88,29 @@ html(lang="en")#anione-dev-html
 				var banners = $("#nav").find("button");
 				var destination = $("#banner-wrapper");
 				var scrubber = $("#scrubber");
+				var cookie_is_set = document.cookie.match(/^(.*;)?\s*anione_current_size\s*=\s*[^;]+(.*)?$/);
 
-				handleAjax($(banners[0]).attr("data-link"));
+				window.getCookie = function(name) {
+					match = document.cookie.match(new RegExp(name + '=([^;]+)'));
+					if (match) return match[1];
+				}
+
+				if (!cookie_is_set) {
+					document.cookie = "anione_current_size=" + getBannerSize(banners[0]);
+					handleAjax($(banners[0]).attr("data-link"));
+				} else {
+					handleAjax("banners/" + getCookie("anione_current_size") + ".html");
+				}
 
 				$(banners).on("click", function() {
-					var link = $(this).attr("data-link");
-					handleAjax.call(this, link);
-				});
+      		var link = $(this).attr("data-link");
+					document.cookie = "anione_current_size=" + getBannerSize(this);
+      		handleAjax.call(this, link);
+      	});
+
+				function getBannerSize (banner) {
+					return $(banner).attr("data-link").split("/")[1].split(".html")[0];
+				}
 
 				function handleAjax (link) {
 					$.ajax({
