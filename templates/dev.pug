@@ -103,10 +103,10 @@ html(lang="en")#anione-dev-html
 				}
 
 				$(banners).on("click", function() {
-      		var link = $(this).attr("data-link");
+					var link = $(this).attr("data-link");
 					document.cookie = "anione_current_size=" + getBannerSize(this);
-      		handleAjax.call(this, link);
-      	});
+					handleAjax.call(this, link);
+				});
 
 				function getBannerSize (banner) {
 					return $(banner).attr("data-link").split("/")[1].split(".html")[0];
