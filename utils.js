@@ -169,7 +169,7 @@ const utils = {
 
 				animated_banners = animated_banners.map((banner) => {
 					const newPath = banner.path.replace(/\.\/banners\//ig, "banners/"),
-								size = banner.layer_name.split(config.project)[1];
+								size = banner.layer_name;
 					return banner = Object.assign(banner, {
 						path: newPath,
 						width: size.split("x")[0],
