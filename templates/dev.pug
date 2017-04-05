@@ -89,29 +89,64 @@ html(lang="en")#anione-dev-html
 				var destination = $("#banner-wrapper");
 				var scrubber = $("#scrubber");
 				var cookie_is_set = document.cookie.match(/^(.*;)?\s*anione_current_size\s*=\s*[^;]+(.*)?$/);
-
+			
 				window.getCookie = function(name) {
 					match = document.cookie.match(new RegExp(name + '=([^;]+)'));
 					if (match) return match[1];
 				}
-
+			
 				if (!cookie_is_set) {
 					document.cookie = "anione_current_size=" + getBannerSize(banners[0]);
 					handleAjax($(banners[0]).attr("data-link"));
 				} else {
 					handleAjax("banners/" + getCookie("anione_current_size") + ".html");
 				}
-
+			
 				$(banners).on("click", function() {
 					var link = $(this).attr("data-link");
 					document.cookie = "anione_current_size=" + getBannerSize(this);
 					handleAjax.call(this, link);
 				});
-
+			
 				function getBannerSize (banner) {
 					return $(banner).attr("data-link").split("/")[1].split(".html")[0];
 				}
 
+				// Source: http://stackoverflow.com/questions/7718935/load-scripts-asynchronously
+				function loadScript(src, callback)
+				{
+					var s,
+							r,
+							t;
+					r = false;
+					s = document.createElement('script');
+					s.type = 'text/javascript';
+					s.src = src;
+					s.onload = s.onreadystatechange = function() {
+						if ( !r && (!this.readyState || this.readyState == 'complete') )
+						{
+							r = true;
+							callback();
+						}
+					};
+					t = document.getElementsByTagName('script')[0];
+					t.parentNode.insertBefore(s, t);
+				}
+
+				var recursiveScriptLoad = function (scripts_array, callback) {
+					if (scripts_array.length > 0) { // make sure there is an item in the array
+						loadScript(scripts_array[0], function () {
+							scripts_array.shift();
+							if (scripts_array.length > 0) { // if there are more items in the array after removing the first item, recall the function, else call the callback
+								recursiveScriptLoad(scripts_array, callback)
+							} else {
+								callback();
+							}
+						})
+
+					}
+				}
+			
 				function handleAjax (link) {
 					$.ajax({
 						type: "GET",
@@ -120,32 +155,55 @@ html(lang="en")#anione-dev-html
 						success: function (response) {
 							$(destination).text("");
 							$(scrubber).text("");
-							$(destination).append(response.styles);
-							$(destination).append(response.markup);
-							window.banner = new Function(response.scripts)();
 
-							handleScrubber();
+							recursiveScriptLoad(response.src_scripts, function() {
+								$(destination).append(response.href_styles)
+								$(destination).append(response.styles);
+								$(destination).append(response.markup);
+								window.banner = new Function(response.scripts)();
+								handleScrubber();
+							})
 						},
 						error: function (response) {
 							console.error("Error in getting banner, ", response);
 						}
 					});
 				}
-
+			
 				function dataFilter (response) {
 					var styles = response.match(/<style data-anione="styles".*?>[\s\S]*?<\/style>/ig)[0];
-					var scriptsRegex = /<script data-anione="scripts".*?>([\s\S]*?)<\/script>/ig;
-					var scripts = scriptsRegex.exec(response)[1];
+					var href_styles_match = response.match(/<link.*href="([\s\S]*?)".*?>/ig);
+					var href_styles = "";
+					var scripts_regex = /<script data-anione="scripts".*?>([\s\S]*?)<\/script>/ig;
+					var scripts = scripts_regex.exec(response)[1];
+					var src_scripts_regex = /<script src="([\s\S]*?)"><\/script>/ig;
+					var src_scripts = [];
 					var markup = response.match(/<a data-anione="markup".*?>[\s\S]*?<\/a>/ig)[0];
 					markup = markup.replace(/\.\.\/assets\//ig, "assets/");
+
+					var a_src;
+					while (a_src = src_scripts_regex.exec(response)) {
+						src_scripts.push(a_src[1])
+					}
+
+					if (href_styles_match) {
+						for (var i = 0; i <= href_styles_match.length; i++) {
+							var style = href_styles_match[i];
+							if (style) {
+								href_styles += style;
+							}
+						}
+					}
 
 					return {
 						styles: styles,
 						scripts: scripts,
-						markup: markup
+						markup: markup,
+						src_scripts: src_scripts,
+						href_styles: href_styles,
 					};
 				}
-
+			
 				function handleScrubber () {
 					var slider = new GSAPTLSlider(window.banner, "scrubber", {
 						width: 300
