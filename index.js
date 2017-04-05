@@ -6,7 +6,7 @@ const co = require("co");
 const prompt = require("co-prompt");
 
 program
-	.version("1.1.0")
+	.version("1.1.1")
 	.command("init", "Builds Anione project directory structure and config.")
 	.command("one", "Generates first banner from template.")
 	.command("resize", "Resize your first banner into all remaining sizes selected during configuration. These can also be found in your ani-conf.json file.")

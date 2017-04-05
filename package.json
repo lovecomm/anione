@@ -1,6 +1,6 @@
 {
   "name": "anione",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A CLI (NPM) tool to ease the repetitiveness that comes with coding HTML5 banner ads.",
   "main": "index.js",
   "bin": {

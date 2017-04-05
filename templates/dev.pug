@@ -17,6 +17,7 @@ html(lang="en")#anione-dev-html
 			body#anione-dev-body {
 				background-color: #666;
 				display: flex;
+				margin: 0;
 			}
 
 			body#anione-dev-body > #nav {
@@ -143,7 +144,8 @@ html(lang="en")#anione-dev-html
 								callback();
 							}
 						})
-
+					} else {
+						callback();
 					}
 				}
 			
