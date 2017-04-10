@@ -26,7 +26,7 @@ Anione is all about making the development experience of HTML5 banner animation 
 ## Asset naming conventions
 
 ### Layers for HTML5 Banners
-These are images that you'll use within the HTML5 banners. Be sure that each banner has it's own images. Even if banners use the same image, each banner will need their own. Place all of these images in **assets/images/** during development. These will be copied into each individual banner directory when you run the **handoff** command. To work with anione, name them as follows: **layername-size.extension** (Example: cta-300x600.png). Checkout this [Photoshop script](https://github.com/lovecomm/PSD-anione-export-scripts) to export image layers quickly.
+These are images that you'll use within the HTML5 banners. Be sure that each banner has it's own images. Even if banners use the same image, each banner will need their own. Place all of these images in **assets/images/** during development. These will be copied into each individual banner directory when you run the **handoff** command. To work with anione, name them as follows: **size-layername.extension** (Example: cta-300x600.png). Checkout this [Photoshop script](https://github.com/lovecomm/PSD-anione-export-scripts) to export image layers quickly.
 
 ### Static backups
 These are often used by vendors as statics when HTML5 banners aren't able to load in a visitors browser. To work an anione, you'll want to put them within the **assets/statics/** dir, and name them as follows: **size-static.extension** (Example: 300x600-static.png). Checkout this [Photoshop script](https://github.com/lovecomm/PSD-anione-export-scripts) to export static backups quickly.

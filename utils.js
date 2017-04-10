@@ -84,13 +84,13 @@ const utils = {
 				let filename = files[i];
 
 				if (!this.is_hidden(filename)) { // we don't want hidden files
-					let layer_name = camel(filename.split('-')[0]);
+					let layer_name = camel(filename.split('-')[1].split('.')[0]);
 
 					if( filename.indexOf( size ) > -1 ) { // specific to the size provided
 						img_array.push({
-							'filename' : filename,
-							"layer_name" : layer_name}
-						);
+							"filename" : filename,
+							"layer_name" : layer_name
+						});
 					}
 				}
 			}
