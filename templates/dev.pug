@@ -36,7 +36,7 @@ html(lang="en")#anione-dev-html
 				color: white;
 				padding: 20px 5px;
 				font-size: 16px;
-				border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+				border-bottom: 1px solid rgba(255, 255, 255, 0.75);
 				transition: background 0.3s ease;
 				outline: none !important;
 				cursor: pointer;
@@ -66,6 +66,18 @@ html(lang="en")#anione-dev-html
 
 			body#anione-dev-body > #view > #banner-wrapper {
 				padding: 20px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+
+			body#anione-dev-body > #view > #banner-wrapper .warning {
+				max-width: 270px;
+				color: black;
+				background-color: rgba(255, 255, 255, 0.5);
+				border: 1px solid red;
+				padding: 15px;
+				font-family: sans-serif;
 			}
 
 			body#anione-dev-body > #view > #scrubber {
@@ -178,6 +190,9 @@ html(lang="en")#anione-dev-html
 					var href_styles = "";
 					var scripts_regex = /<script data-anione="scripts".*?>([\s\S]*?)<\/script>/ig;
 					var scripts = scripts_regex.exec(response)[1];
+					scripts = scripts.replace("(function() { // ANIONE: main timeline function", "return (function() { // ANIONE: main timeline function");
+					scripts = scripts.replace("tl // ANIONE: main timeline", "return tl // ANIONE: main timeline")
+					var has_timeline = /[^tl // ANIONE: main timeline][1-9]/.test(scripts); // we just have to know if the timeline has any duration... so really we just need to find a number after the start of the timeline. This is obviously hackish... potential problems include if there are any other code after the timeline that includes numbers, or if someone comments out the only timeline method that contains numbers/time.
 					var src_scripts_regex = /<script src="([\s\S]*?)"><\/script>/ig;
 					var src_scripts = [];
 					var markup = response.match(/<a data-anione="markup".*?>[\s\S]*?<\/a>/ig)[0];
@@ -197,9 +212,14 @@ html(lang="en")#anione-dev-html
 						}
 					}
 
+					if (!has_timeline) {
+						markup = "<p class='warning'>No timeline found. After you start adding methods to the greensock timeline in your banner, this message will go away. If it does not, then there was a problem finding any duration of time on your timeline.</p>" + markup
+						console.log(markup)
+					}
+
 					return {
 						styles: styles,
-						scripts: scripts,
+						scripts: has_timeline === true ? scripts : "",
 						markup: markup,
 						src_scripts: src_scripts,
 						href_styles: href_styles,
@@ -207,9 +227,11 @@ html(lang="en")#anione-dev-html
 				}
 			
 				function handleScrubber () {
-					var slider = new GSAPTLSlider(window.banner, "scrubber", {
-						width: 300
-					});
+					if (window.banner) {
+						var slider = new GSAPTLSlider(window.banner, "scrubber", {
+							width: 300
+						});
+					}
 				}
 			});
 			

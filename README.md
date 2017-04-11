@@ -8,7 +8,7 @@ After that, it's often necessary to send the banners for review to a client or w
 Once you're ready to package the banners, just run the *handoff* command. This command grabs all related images and global css/js assets for each banner. Then makes a version of the banner for each vendor, and zips it up. Then all banners are zipped into one nice packaged file.
 
 ## Development Experience
-Anione is all about making the development experience of HTML5 banner animation easier and more pleasant. As such, there is a centralized view where you can ajax load each banner with a timeline scrubber.
+Anione is all about making the development experience of HTML5 banner animation easier and more pleasant. As such, there is a centralized view where you can ajax load each banner with a timeline scrubber. This view is loaded with Browser Sync after both of the *ani one*, *ani resize*, and *ani watch* commands.
 
 ## Commands:
 * *init* – Builds Anione project directory structure and config.

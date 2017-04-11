@@ -141,10 +141,11 @@ const utils = {
 		dev: async function () {
 			const $ = utils;
 			try {
-				const banner_files = await fs.readdirAsync("./banners/"),
+				let 	banner_files = await fs.readdirAsync("./banners/"),
 							scrubber = await $.read_path(`${__dirname}/assets/scrubber.js`),
-							templatePath = `${__dirname}/${$.paths.template.dev}`,
-							options = {
+							templatePath = `${__dirname}/${$.paths.template.dev}`;
+							banner_files = banner_files.filter((filename) => !$.is_hidden(filename));
+				const options = {
 								pretty: true,
 								filename: "index.html",
 							},

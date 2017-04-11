@@ -52,7 +52,7 @@ html(lang="en")
 		| 
 		| 
 		script(data-anione="scripts")
-			| return (function() {
+			| (function() { // ANIONE: main timeline function
 			| var tl = new TimelineMax();
 			| var h = #{height}; // Banner's height
 			| var w = #{width}; // Banner's width
@@ -61,7 +61,6 @@ html(lang="en")
 			each image in images
 				| var #{image.layer_name} = document.getElementById("#{image.layer_name}");
 				|
-			| // NOTE: You will get console errors on the dev page until you start building the timeline. This doesn't cause any issues.
-			| return tl
+			| tl // ANIONE: main timeline
 			| })();
 		<!-- ANIONE: vendorScriptFooter -->
