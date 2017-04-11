@@ -8,7 +8,8 @@ const Promise = require("bluebird"),
 			colors = require("colors"),
 			imagemin = require('imagemin'),
 			imageminMozjpeg = require('imagemin-mozjpeg'),
-			imageminPngcrush = require('imagemin-pngcrush'),
+			// imageminPngcrush = require('imagemin-pngcrush'),
+			imageoptim = require('imageoptim'),
 			imageminGiflossy = require('imagemin-giflossy'),
 			browserSync = require('browser-sync').create();
 
@@ -95,17 +96,19 @@ const utils = {
 				}
 			}
 			if (copy) {
-				await imagemin([`./assets/images/*-${size}.{jpg,png,gif}`], destination, {
+				// await imageoptim.optim([`./assets/images/${size}-cta.png`], { reporters: ['flat'] });
+				await imagemin([`./assets/images/${size}-*.{jpg,png,gif}`], destination, {
 					plugins: [
 						imageminMozjpeg(),
-						imageminPngcrush(),
 						imageminGiflossy({lossy: 0}),
 					]
 				});
+
+				let img_array_paths = img_array.map((img_item) => `${destination}${img_item.filename}`);
+				await imageoptim.optim(img_array_paths); // doesn't support a wildcard in the non CLI environment.
 			}
 			return Promise.resolve(img_array);
 		} catch (e) {
-			console.log(e)
 			return Promise.reject("Problem finding image assets.")
 		}
 	},
@@ -252,7 +255,6 @@ const utils = {
 				return Promise.resolve(false);
 			}
 		} catch (e) {
-			console.log(e);
 			return Promise.reject(`Problem copying files from ${srcPath} to ${targetPath}.`);
 		}
  	},
