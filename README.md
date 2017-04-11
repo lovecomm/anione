@@ -40,12 +40,12 @@ You're more than welcome to use custom CSS & JS libraries with your project. In 
 * .gitignore
 * assets
 	* statics
-		* (project-size.jpg)
-		* (project-size.png)
+		* (size-static.jpg)
+		* (size-static.png)
 		...
 	* images
-		* (layer-size.jpg)
-		* (layer-size.png)
+		* (size-layer.jpg)
+		* (size-layer.png)
 		...
 	* libs-js
 		* (js-library.js)
