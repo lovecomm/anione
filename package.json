@@ -1,6 +1,6 @@
 {
   "name": "anione",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "A CLI (NPM) tool to ease the repetitiveness that comes with coding HTML5 banner ads.",
   "main": "index.js",
   "bin": {
@@ -25,7 +25,11 @@
     "Preview generator",
     "Project packaging"
   ],
-  "author": "Logan Call",
+  "author": { 
+    "name" : "Logan Call",
+    "email" : "logancall.dev@gmail.com",
+    "url" : "https://github.com/loganisninja"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/lovecomm/anione/issues"
