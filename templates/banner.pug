@@ -41,16 +41,16 @@ html(lang="en")
 			.valign {	top: 0;	bottom: 0; margin: auto; } /* Align a DOM element vertically*/
 			/* /CSS HELPER CLASSES */
 		<!-- DoubleClick Greensock CDN (TweenMax) -->
-		script(type="text/javascript" src="https://s0.2mdn.net/ads/studio/cached_libs/tweenmax_1.18.0_499ba64a23378545748ff12d372e59e9_min.js")
+		script(type="text/javascript" src="https://s0.2mdn.net/ads/studio/cached_libs/tweenmax_2.1.2_min.js")
 	body
-		| 
-		| 
+		|
+		|
 		a(data-anione="markup" href='#ANIONE:vendorLink' id='bannerLink')
 			each image in images
 				| <img src="#{imgPath + image.filename}" id="#{image.layer_name}" alt="#{image.layer_name}" />
 				|
-		| 
-		| 
+		|
+		|
 		script(data-anione="scripts")
 			| (function() { // ANIONE: main timeline function
 			| var tl = new TimelineMax();

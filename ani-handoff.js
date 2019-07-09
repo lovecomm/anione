@@ -6,7 +6,7 @@ const 	Promise = require("bluebird"),
 				FolderZip = require('folder-zip'),
 				imagemin = require('imagemin'),
 				colors = require("colors"),
-				imageminMozjpeg = require('imagemin-mozjpeg'),
+				imageminJpegtran = require('imagemin-jpegtran'),
 				imageminPngcrush = require('imagemin-pngcrush'),
 				imageminGiflossy = require('imagemin-giflossy'),
 				$ = require("./utils");
@@ -20,7 +20,7 @@ exports.handoff = async function () {
 		const banner_files = await $.get_files_in("./banners/"),
 					handoff_path = "./" + config.project + "-handoff",
 					handoff_path_exists = $.read_path(handoff_path);
-		
+
 		if (handoff_path_exists) await rimraf(handoff_path);
 		await fs.mkdirAsync(handoff_path);
 
@@ -31,13 +31,22 @@ exports.handoff = async function () {
 				await fs.mkdirAsync(`${handoff_path}/statics`);
 				await imagemin([`./assets/statics/*.{jpg,png,gif}`], `${handoff_path}/statics`, {
 					plugins: [
-						imageminMozjpeg(),
+						imageminJpegtran(),
 						imageminPngcrush(),
 						imageminGiflossy({lossy: 0}),
 					]
-				});	
+				});
+				// Rename statics with project name
+				await fs.readdir(`${handoff_path}/statics`, (err, files) => {
+					for (const file of files) {
+						fs.rename(`${handoff_path}/statics/${file}`, `${handoff_path}/statics/${config.project}-${file}`, (err) => {
+							if (err) throw err
+						})
+					}
+				})
+
 			} else {
-			$.handle_notice("No static files found. As such, none will be added to the handoff.");
+				$.handle_notice("No static files found. As such, none will be added to the handoff.");
 			}
 		} catch (e) {
 			$.handle_notice("No static files found. As such, none will be added to the handoff.");
@@ -57,28 +66,23 @@ exports.handoff = async function () {
 					await fs.mkdirAsync(banner.path);
 					await fs.writeFileAsync(`${banner.path}/index.html`, banner.file);
 					await $.get_images_for(banner.size, true, banner.path + "/");
-					await $.copy_files_in("./assets/libs-css/", `${banner.path}/`);
-					await $.copy_files_in("./assets/libs-js/", `${banner.path}/`);
 					await zipFolder(banner.path, {excludeParentFolder: true});
 					await writeToFile(`${banner.path}.zip`);
+					await fs.rename(`${banner.path}.zip`, `${vendor_path}/${config.project}-${banner.size}.zip`, (err) => {
+							if (err) throw err
+						});
 					await rimraf(banner.path)
-					
+
 				} catch (e) {
 					$.handle_error(`Failed to gather assets for or zip ${banner_info.filename}`);
 				}
 			}
 		}
 
-		const libs_css = await $.read_dir("./assets/libs-css/"),
-					libs_js = await $.read_dir("./assets/libs-js/");
-
-		if(!libs_css) $.handle_notice("No files found in 'assets/libs_css'. As such no global css (library) files were added to each banner.");
-		if(!libs_js) $.handle_notice("No files found in 'assets/libs_js'. As such no global js (library) files were added to each banner.");
-
 		const zip = Promise.promisifyAll(new FolderZip()),
 					zipFolder = Promise.promisify(zip.zipFolder, {context: zip}),
 					writeToFile = Promise.promisify(zip.writeToFile, {context: zip});
-		
+
 		await zipFolder(handoff_path, {excludeParentFolder: true});
 		await writeToFile(`${handoff_path}.zip`);
 		await rimraf(handoff_path);
