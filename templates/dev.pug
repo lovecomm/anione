@@ -4,12 +4,12 @@ html(lang="en")#anione-dev-html
 		title= "Anione Development"
 		meta(charset='UTF-8')
 		script(src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous")
-		script(src="https://s0.2mdn.net/ads/studio/cached_libs/tweenmax_1.18.0_499ba64a23378545748ff12d372e59e9_min.js")
+		script(src="https://s0.2mdn.net/ads/studio/cached_libs/tweenmax_2.1.2_min.js")
 		script.
 			!{scrubber}
 		style(type="text/css").
 			html#anione-dev-html,
-			body#anione-dev-body { 
+			body#anione-dev-body {
 				height: 100%;
 				width: 100%;
 			}
@@ -29,7 +29,7 @@ html(lang="en")#anione-dev-html
 			}
 
 			body#anione-dev-body > #nav > div > button {
-				width: 100%; 
+				width: 100%;
 				border-radius: 0;
 				border: none;
 				background: rgba(0, 0, 0, 0);
@@ -85,14 +85,14 @@ html(lang="en")#anione-dev-html
 				text-align: center;
 				margin: 40px 0;
 			}
-			
+
 			body#anione-dev-body > #view > #scrubber polygon,
 			body#anione-dev-body > #view > #scrubber rect { fill: white !important; }
 			body#anione-dev-body > #view > #scrubber > div:last-of-type { background-color: white !important; }
 	body#anione-dev-body
 		div#nav
 			each banner in banners
-				| <div><button data-link="banners/#{banner}">#{banner.split("/")[0].split(".")[0]}</button></div>		
+				| <div><button data-link="banners/#{banner}">#{banner.split("/")[0].split(".")[0]}</button></div>
 		div#view
 			div#banner-wrapper
 			div#scrubber
@@ -102,25 +102,25 @@ html(lang="en")#anione-dev-html
 				var destination = $("#banner-wrapper");
 				var scrubber = $("#scrubber");
 				var cookie_is_set = document.cookie.match(/^(.*;)?\s*anione_current_size\s*=\s*[^;]+(.*)?$/);
-			
+
 				window.getCookie = function(name) {
 					match = document.cookie.match(new RegExp(name + '=([^;]+)'));
 					if (match) return match[1];
 				}
-			
+
 				if (!cookie_is_set) {
 					document.cookie = "anione_current_size=" + getBannerSize(banners[0]);
 					handleAjax($(banners[0]).attr("data-link"));
 				} else {
 					handleAjax("banners/" + getCookie("anione_current_size") + ".html");
 				}
-			
+
 				$(banners).on("click", function() {
 					var link = $(this).attr("data-link");
 					document.cookie = "anione_current_size=" + getBannerSize(this);
 					handleAjax.call(this, link);
 				});
-			
+
 				function getBannerSize (banner) {
 					return $(banner).attr("data-link").split("/")[1].split(".html")[0];
 				}
@@ -160,7 +160,7 @@ html(lang="en")#anione-dev-html
 						callback();
 					}
 				}
-			
+
 				function handleAjax (link) {
 					$.ajax({
 						type: "GET",
@@ -183,7 +183,7 @@ html(lang="en")#anione-dev-html
 						}
 					});
 				}
-			
+
 				function dataFilter (response) {
 					var styles = response.match(/<style data-anione="styles".*?>[\s\S]*?<\/style>/ig)[0];
 					var href_styles_match = response.match(/<link.*href="([\s\S]*?)".*?>/ig);
@@ -225,7 +225,7 @@ html(lang="en")#anione-dev-html
 						href_styles: href_styles,
 					};
 				}
-			
+
 				function handleScrubber () {
 					if (window.banner) {
 						var slider = new GSAPTLSlider(window.banner, "scrubber", {
@@ -234,4 +234,3 @@ html(lang="en")#anione-dev-html
 					}
 				}
 			});
-			
