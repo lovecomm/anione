@@ -1,8 +1,8 @@
 {
   "author": {
-    "name": "Logan Call",
-    "email": "logancall.dev@gmail.com",
-    "url": "https://github.com/loganisninja"
+    "name": "Love Communications",
+    "email": "interactive@lovecomm.net",
+    "url": "https://github.com/lovecomm"
   },
   "bin": {
     "ani": "./index.js"

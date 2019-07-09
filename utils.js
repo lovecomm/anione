@@ -131,8 +131,6 @@ const utils = {
 			if (banner_file) return $.handle_notice(`Your first banner, ${config.sizes[0]} already exists. You can regenerate it from the template by deleting ${config.sizes[0]}.html and running 'ani one' again.`);
 
 			try {
-				locals.scripts = await fs.readdirAsync($.paths.directories.scripts);
-				locals.styles = await fs.readdirAsync($.paths.directories.styles);
 				await fs.writeFileAsync(`./banners/${config.sizes[0]}.html`, html);
 				return Promise.resolve();
 			} catch (e) {
