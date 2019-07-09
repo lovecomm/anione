@@ -7,7 +7,7 @@ const Promise = require("bluebird"),
 			pug = require("pug"),
 			colors = require("colors"),
 			imagemin = require('imagemin'),
-			imageminMozjpeg = require('imagemin-mozjpeg'),
+			imageminJpegtran = require('imagemin-jpegtran'),
 			// imageminPngcrush = require('imagemin-pngcrush'),
 			imageoptim = require('imageoptim'),
 			imageminGiflossy = require('imagemin-giflossy'),
@@ -63,8 +63,6 @@ const utils = {
 			source = this.replace_string_regex(source, "<!-- ANIONE: vendorScriptFooter -->", vendor.scriptFooter);
 			source = this.replace_string_regex(source, "#ANIONE:vendorLink", vendor.link);
 			source = this.replace_string_regex(source, "../assets/images/", "");
-			source = this.replace_string_regex(source, "../assets/libs-css/", "");
-			source = this.replace_string_regex(source, "../assets/libs-js/", "");
 			source = source.replace(/return \(function\(\) \{/, '(function() {');
 
 			return Promise.resolve({
@@ -78,7 +76,7 @@ const utils = {
 	},
 	get_images_for: async function (size, copy, destination) {
 		let img_array = [];
-		
+
 		try {
 			const files = await fs.readdirAsync("./assets/images/");
 				for (let i = 0; i < files.length; i++) {
@@ -99,7 +97,7 @@ const utils = {
 				// await imageoptim.optim([`./assets/images/${size}-cta.png`], { reporters: ['flat'] });
 				await imagemin([`./assets/images/${size}-*.{jpg,png,gif}`], destination, {
 					plugins: [
-						imageminMozjpeg(),
+						imageminJpegtran(),
 						imageminGiflossy({lossy: 0}),
 					]
 				});
@@ -287,16 +285,12 @@ const utils = {
 			"./assets",
 			"./assets/statics",
 			"./assets/images",
-			"./assets/libs-js",
-			"./assets/libs-css",
 			"./banners",
 			"./preview",
 			"./preview/assets",
 			"./preview/banners",
 		],
 		directories: {
-			"scripts": "./assets/libs-js/",
-			"styles": "./assets/libs-css/",
 			"images": "../assets/images/",
 		},
 		template: {
@@ -305,8 +299,8 @@ const utils = {
 			"preview" : "templates/preview.pug",
 		},
 		watch: [
-			"banners/**", 
-			"assets/**", 
+			"banners/**",
+			"assets/**",
 			"index.html",
 		],
 	}
