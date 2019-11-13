@@ -141,7 +141,7 @@ const utils = {
 			const $ = utils;
 			try {
 				let 	banner_files = await fs.readdirAsync("./banners/"),
-							scrubber = await $.read_path(`${__dirname}/assets/scrubber.js`),
+							scrubber = await $.read_path(`${__dirname}/assets/GSDevTools.js`),
 							templatePath = `${__dirname}/${$.paths.template.dev}`;
 							banner_files = banner_files.filter((filename) => !$.is_hidden(filename));
 				const options = {

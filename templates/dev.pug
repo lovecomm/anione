@@ -81,14 +81,12 @@ html(lang="en")#anione-dev-html
 			}
 
 			body#anione-dev-body > #view > #scrubber {
-				width: 85 %;
+				width: 650px;
 				text-align: center;
-				margin: 40px 0;
+				margin: 100px 0 0;
+				position: relative;
 			}
-
-			body#anione-dev-body > #view > #scrubber polygon,
-			body#anione-dev-body > #view > #scrubber rect { fill: white !important; }
-			body#anione-dev-body > #view > #scrubber > div:last-of-type { background-color: white !important; }
+			
 	body#anione-dev-body
 		div#nav
 			each banner in banners
@@ -102,6 +100,12 @@ html(lang="en")#anione-dev-html
 				var destination = $("#banner-wrapper");
 				var scrubber = $("#scrubber");
 				var cookie_is_set = document.cookie.match(/^(.*;)?\s*anione_current_size\s*=\s*[^;]+(.*)?$/);
+
+				var gsaptools = GSDevTools.create({
+					globalSync:false,
+					container: "#scrubber",
+					minimal: false
+				});
 
 				window.getCookie = function(name) {
 					match = document.cookie.match(new RegExp(name + '=([^;]+)'));
@@ -168,7 +172,6 @@ html(lang="en")#anione-dev-html
 						dataFilter: dataFilter,
 						success: function (response) {
 							$(destination).text("");
-							$(scrubber).text("");
 
 							recursiveScriptLoad(response.src_scripts, function() {
 								$(destination).append(response.href_styles)
@@ -214,7 +217,6 @@ html(lang="en")#anione-dev-html
 
 					if (!has_timeline) {
 						markup = "<p class='warning'>No timeline found. After you start adding methods to the greensock timeline in your banner, this message will go away. If it does not, then there was a problem finding any duration of time on your timeline.</p>" + markup
-						console.log(markup)
 					}
 
 					return {
@@ -228,9 +230,7 @@ html(lang="en")#anione-dev-html
 
 				function handleScrubber () {
 					if (window.banner) {
-						var slider = new GSAPTLSlider(window.banner, "scrubber", {
-							width: 300
-						});
+						gsaptools.animation(window.banner)
 					}
 				}
 			});
