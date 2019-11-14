@@ -7,10 +7,6 @@ const Promise = require("bluebird"),
 			pug = require("pug"),
 			colors = require("colors"),
 			imagemin = require('imagemin'),
-			imageminJpegtran = require('imagemin-jpegtran'),
-			// imageminPngcrush = require('imagemin-pngcrush'),
-			imageoptim = require('imageoptim'),
-			imageminGiflossy = require('imagemin-giflossy'),
 			browserSync = require('browser-sync').create();
 
 const utils = {
@@ -94,16 +90,8 @@ const utils = {
 				}
 			}
 			if (copy) {
-				// await imageoptim.optim([`./assets/images/${size}-cta.png`], { reporters: ['flat'] });
-				await imagemin([`./assets/images/${size}-*.{jpg,png,gif}`], destination, {
-					plugins: [
-						imageminJpegtran(),
-						imageminGiflossy({lossy: 0}),
-					]
-				});
-
+				await imagemin([`./assets/images/${size}-*.{jpg,png,gif}`], destination, {});
 				let img_array_paths = img_array.map((img_item) => `${destination}${img_item.filename}`);
-				await imageoptim.optim(img_array_paths); // doesn't support a wildcard in the non CLI environment.
 			}
 			return Promise.resolve(img_array);
 		} catch (e) {
