@@ -8,25 +8,29 @@ html(lang="en")#anione-dev-html
 		script(src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous")
 	body
 		header
-			h1 #{pageTitle}-Banners
+			div.logo
+				img(src="https://lovecomm.net/signature/img/love@2x.png" alt="Love" width="80")
+			h2 #{pageTitle}-Banners
 		div.wrapper
 			div.main
 				if banners.statics.length > 0
 					if banners.animated.length > 0
 						p.disclaimer The <strong>Static Banners</strong> will open in a gallery like fashion, where you can click through each of them within the lightbox. However, the <strong>Animated Banners</strong> will have to be opened individually, but will still load in a&nbsp;lightbox.
-				div.animated
+				div.links
 					if banners.statics.length > 0
-						h2 Static Banners
-						ul
-							each banner in banners.statics
-								| <li><a href="#{banner.path}" class="gallery banner">#{banner.layer_name}</a></li>
-								|
+						div
+							h3 Static Banners
+							ul
+								each banner in banners.statics
+									| <li><a href="#{banner.path}" class="gallery banner">#{banner.layer_name}</a></li>
+									|
 					if banners.animated.length > 0
-						h2 Animated Banners
-						ul
-							each banner in banners.animated
-								| <li><a class="html5 banner" href="#{banner.path}" data-featherlight="iframe" data-featherlight-iframe-width="#{banner.width}" data-featherlight-iframe-height="#{banner.height}">#{banner.layer_name}</a></li>
-								|
+						div
+							h3 Animated Banners
+							ul
+								each banner in banners.animated
+									| <li><a class="html5 banner" href="#{banner.path}" data-featherlight="iframe" data-featherlight-iframe-width="#{banner.width}" data-featherlight-iframe-height="#{banner.height}">#{banner.layer_name}</a></li>
+									|
 		footer
 		script(src="featherlight.js" type="text/javascript" charset="utf-8")
 		script(src="featherlight.gallery.js" type="text/javascript" charset="utf-8")

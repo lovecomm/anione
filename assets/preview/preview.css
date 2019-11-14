@@ -1,84 +1,4 @@
-a,
-abbr,
-acronym,
-address,
-applet,
-article,
-aside,
-audio,
-b,
-big,
-blockquote,
-body,
-canvas,
-caption,
-center,
-cite,
-code,
-dd,
-del,
-details,
-dfn,
-div,
-dl,
-dt,
-em,
-embed,
-fieldset,
-figcaption,
-figure,
-footer,
-form,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-header,
-hgroup,
-html,
-i,
-iframe,
-img,
-ins,
-kbd,
-label,
-legend,
-li,
-mark,
-menu,
-nav,
-object,
-ol,
-output,
-p,
-pre,
-q,
-ruby,
-s,
-samp,
-section,
-small,
-span,
-strike,
-strong,
-sub,
-summary,
-sup,
-table,
-tbody,
-td,
-tfoot,
-th,
-thead,
-time,
-tr,
-tt,
-u,
-ul,
-var,
-video {
+a, abbr, acronym, address, applet, article, aside, audio, b, big, blockquote, body, canvas, caption, center, cite, code, dd, del, details, dfn, div, dl, dt, em, embed, fieldset, figcaption, figure, footer, form, h1, h2, h3, h4, h5, h6, header, hgroup, html, i, iframe, img, ins, kbd, label, legend, li, mark, menu, nav, object, ol, output, p, pre, q, ruby, s, samp, section, small, span, strike, strong, sub, summary, sup, table, tbody, td, tfoot, th, thead, time, tr, tt, u, ul, var, video {
     margin: 0;
     padding: 0;
     border: 0;
@@ -86,41 +6,13 @@ video {
     font: inherit;
     vertical-align: baseline
 }
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-menu,
-nav,
-section {
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
     display: block
 }
 body {
     line-height: 1
 }
-ol,
-ul {
-    list-style: none
-}
-blockquote,
-q {
-    quotes: none
-}
-blockquote:after,
-blockquote:before,
-q:after,
-q:before {
-    content: "";
-    content: none
-}
-table {
-    border-collapse: collapse;
-    border-spacing: 0
-}
+
 @media {
     .featherlight {
         display: none;
@@ -312,24 +204,18 @@ table {
 }
 body {
     font-family: Roboto, sans-serif;
-    background-color: #0054a6
 }
 header {
-    color: #fff;
     text-align: center;
     font-size: 32px;
     font-weight: 100;
     text-transform: uppercase;
     padding: 50px 50px 0;
-    margin-bottom: 50px
-}
-.wrapper {
-    background: #fff
+    margin-bottom: 30px
 }
 .main {
     max-width: 800px;
-    margin: 0 auto;
-    padding: 50px 50px 100px
+    margin: 10px auto;
 }
 footer {
     padding: 10px;
@@ -351,17 +237,14 @@ em {
 }
 h2 {
     line-height: 2;
-    margin-top: 50px;
+    margin-top: 10px;
     font-size: 22px;
     font-weight: 600;
     text-transform: uppercase
 }
-.disclaimer h2 {
-    margin-top: 25px
-}
 h3 {
     line-height: 2;
-    margin-top: 15px;
+    margin-top: 10px;
     font-size: 18px;
     font-weight: 300
 }
@@ -372,20 +255,17 @@ ul {
 ul li {
     padding: 5px
 }
-h2+h3 {
-    margin-top: 0
+.links {
+	display: flex;
+}
+.links > div {
+	width: 50%;
 }
 .featherlight-content iframe {
     overflow: hidden!important
 }
 .featherlight {
     z-index: 1
-}
-.download {
-    text-transform: uppercase;
-    font-size: 11px;
-    text-align: right;
-    float: right
 }
 .reattached {
     position: fixed
