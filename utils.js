@@ -176,6 +176,7 @@ const utils = {
 								filename: "index.html",
 							},
 							locals = {
+								randomNumber: Math.random(),
 								banners: {
 									animated: animated_banners,
 									statics: static_banners,

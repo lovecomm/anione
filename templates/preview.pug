@@ -3,6 +3,9 @@ html(lang="en")#anione-dev-html
 	head
 		title= pageTitle
 		meta(charset='UTF-8')
+		meta(http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate")
+		meta(http-equiv="Pragma" content="no-cache")
+		meta(http-equiv="Expires" content="0")
 		link(href="https://fonts.googleapis.com/css?family=Roboto:400,400italic,100,100italic,700,300,300italic")
 		link(href="preview.css" rel="stylesheet")
 		script(src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous")
@@ -22,14 +25,14 @@ html(lang="en")#anione-dev-html
 							h3 Static Banners
 							ul
 								each banner in banners.statics
-									| <li><a href="#{banner.path}" class="gallery banner">#{banner.layer_name}</a></li>
+									| <li><a href="#{banner.path}?#{randomNumber}" class="gallery banner">#{banner.layer_name}</a></li>
 									|
 					if banners.animated.length > 0
 						div
 							h3 Animated Banners
 							ul
 								each banner in banners.animated
-									| <li><a class="html5 banner" href="#{banner.path}" data-featherlight="iframe" data-featherlight-iframe-width="#{banner.width}" data-featherlight-iframe-height="#{banner.height}">#{banner.layer_name}</a></li>
+									| <li><a class="html5 banner" href="#{banner.path}?#{randomNumber}" data-featherlight="iframe" data-featherlight-iframe-width="#{banner.width}" data-featherlight-iframe-height="#{banner.height}">#{banner.layer_name}</a></li>
 									|
 		footer
 		script(src="featherlight.js" type="text/javascript" charset="utf-8")
