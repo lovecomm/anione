@@ -195,7 +195,6 @@ html(lang="en")#anione-dev-html
 					var scripts = scripts_regex.exec(response)[1];
 					scripts = scripts.replace("(function() { // ANIONE: main timeline function", "return (function() { // ANIONE: main timeline function");
 					scripts = scripts.replace("tl // ANIONE: main timeline", "return tl // ANIONE: main timeline")
-					var has_timeline = /[^tl // ANIONE: main timeline][1-9]/.test(scripts); // we just have to know if the timeline has any duration... so really we just need to find a number after the start of the timeline. This is obviously hackish... potential problems include if there are any other code after the timeline that includes numbers, or if someone comments out the only timeline method that contains numbers/time.
 					var src_scripts_regex = /<script src="([\s\S]*?)"><\/script>/ig;
 					var src_scripts = [];
 					var markup = response.match(/<a data-anione="markup".*?>[\s\S]*?<\/a>/ig)[0];
@@ -215,13 +214,9 @@ html(lang="en")#anione-dev-html
 						}
 					}
 
-					if (!has_timeline) {
-						markup = "<p class='warning'>No timeline found. After you start adding methods to the greensock timeline in your banner, this message will go away. If it does not, then there was a problem finding any duration of time on your timeline.</p>" + markup
-					}
-
 					return {
 						styles: styles,
-						scripts: has_timeline === true ? scripts : "",
+						scripts: scripts,
 						markup: markup,
 						src_scripts: src_scripts,
 						href_styles: href_styles,
