@@ -72,10 +72,9 @@ const utils = {
 	},
 	get_images_for: async function (size, copy, destination) {
 		let img_array = [];
-
 		try {
 			const files = await fs.readdirAsync("./assets/images/");
-				for (let i = 0; i < files.length; i++) {
+			for (let i = 0; i < files.length; i++) {
 				let filename = files[i];
 
 				if (!this.is_hidden(filename)) { // we don't want hidden files
@@ -90,8 +89,7 @@ const utils = {
 				}
 			}
 			if (copy) {
-				await imagemin([`./assets/images/${size}-*.{jpg,png,gif}`], destination, {});
-				let img_array_paths = img_array.map((img_item) => `${destination}${img_item.filename}`);
+				await imagemin([`./assets/images/${size}-*.{jpg,png,gif}`], {destination: destination});
 			}
 			return Promise.resolve(img_array);
 		} catch (e) {

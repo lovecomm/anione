@@ -26,7 +26,8 @@ exports.handoff = async function () {
 			let static_files = await $.read_dir("./assets/statics");
 			if (static_files) {
 				await fs.mkdirAsync(`${handoff_path}/statics`);
-				await imagemin([`./assets/statics/*.{jpg,png,gif}`], `${handoff_path}/statics`, {});
+				await imagemin([`./assets/statics/*.{jpg,png,gif}`], {destination: `${handoff_path}/statics`});
+
 				// Rename statics with project name
 				await fs.readdir(`${handoff_path}/statics`, (err, files) => {
 					for (const file of files) {

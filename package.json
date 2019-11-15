@@ -12,19 +12,20 @@
   },
   "bundleDependencies": false,
   "dependencies": {
-    "bluebird": "^3.5.5",
+    "bluebird": "^3.7.1",
     "browser-sync": "^2.26.7",
     "co": "^4.6.0",
     "co-prompt": "^1.0.0",
-    "colors": "^1.3.3",
-    "commander": "^2.20.0",
+    "colors": "^1.4.0",
+    "commander": "^4.0.1",
     "folder-zip": "0.0.5",
-    "fs-extra": "^2.0.0",
-    "imagemin": "^5.2.2",
-    "inquirer": "^3.0.6",
+    "fs-extra": "^8.1.0",
+    "imagemin": "^7.0.0",
+    "imagemin-pngcrush": "^6.0.0",
+    "inquirer": "^7.0.0",
     "pug": "^2.0.4",
-    "rimraf": "^2.6.3",
-    "rsyncwrapper": "^2.0.1",
+    "rimraf": "^3.0.0",
+    "rsyncwrapper": "^3.0.1",
     "titlecase": "^1.1.3",
     "to-camel-case": "^1.0.0"
   },
@@ -53,5 +54,5 @@
     "type": "git",
     "url": "git+https://github.com/lovecomm/anione.git"
   },
-  "version": 1.3
+  "version": "1.3.0"
 }
