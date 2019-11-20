@@ -25,14 +25,14 @@ html(lang="en")#anione-dev-html
 							h3 Static Banners
 							ul
 								each banner in banners.statics
-									| <li><a href="#{banner.path}?#{randomNumber}" class="gallery banner">#{banner.layer_name}</a></li>
+									| <li><a href="#{banner.path}?#{randomNumber}" class="gallery banner">#{banner.layer_name}</a> #{banner.fileSize}</li>
 									|
 					if banners.animated.length > 0
 						div
 							h3 Animated Banners
 							ul
 								each banner in banners.animated
-									| <li><a class="html5 banner" href="#{banner.path}?#{randomNumber}" data-featherlight="iframe" data-featherlight-iframe-width="#{banner.width}" data-featherlight-iframe-height="#{banner.height}">#{banner.layer_name}</a></li>
+									| <li><a class="html5 banner" href="#{banner.path}?v=#{randomNumber}" data-featherlight="iframe" data-featherlight-iframe-width="#{banner.width}" data-featherlight-iframe-height="#{banner.height}">#{banner.layer_name}</a> #{banner.fileSize}</li>
 									|
 		footer
 		script(src="featherlight.js" type="text/javascript" charset="utf-8")

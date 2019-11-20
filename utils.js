@@ -2,8 +2,9 @@
 
 const Promise = require("bluebird"),
 			fs = Promise.promisifyAll(require("fs-extra")),
+			path = require('path'),
+			{ resolve } = require('path'),
 			camel = require('to-camel-case'),
-			toTitleCase = require('titlecase'),
 			pug = require("pug"),
 			colors = require("colors"),
 			imagemin = require('imagemin'),
@@ -49,9 +50,9 @@ const utils = {
 	},
 	vendorify: async function(config, banner_info, vendor_name, vendor_path) {
 		const vendor = config.vendors[vendor_name],
-					size = banner_info.layer_name,
-					destPath = "./" + config.project + "-handoff/" + vendor_name + "/" + size,
-					source_path = "./banners/" + size + ".html";
+		size = banner_info.layer_name,
+		destPath = "./" + config.project + "-handoff/" + vendor_name + "/" + size,
+		source_path = "./banners/" + size + ".html";
 
 		try {
 			let source = await fs.readFileAsync(source_path, "utf8");
@@ -73,7 +74,7 @@ const utils = {
 	get_images_for: async function (size, copy, destination) {
 		let img_array = [];
 		try {
-			const files = await fs.readdirAsync("./assets/images/");
+			const files = await fs.readdirAsync(`./assets/images/${size}`);
 			for (let i = 0; i < files.length; i++) {
 				let filename = files[i];
 
@@ -89,30 +90,45 @@ const utils = {
 				}
 			}
 			if (copy) {
-				await imagemin([`./assets/images/${size}-*.{jpg,png,gif}`], {destination: destination});
+				await imagemin([`./assets/images/${size}/*.{jpg,png,gif}`], {destination: destination});
 			}
 			return Promise.resolve(img_array);
 		} catch (e) {
 			return Promise.reject("Problem finding image assets.")
 		}
 	},
+
+	getDirectorySize: async function(dir) {
+		try{
+			const subdirs = (await fs.readdir(dir));
+			const files = await Promise.all(subdirs.map(async (subdir) => {
+				const res = resolve(dir, subdir);
+				const s = (await fs.stat(res));
+				return s.isDirectory() ? getDirectorySize(res) : (s.size);
+			}));
+			return Promise.resolve( files.reduce((a, f) => a+f, 0) );
+		}catch(e){
+			return Promise.reject('Failed to get file or directory.');
+		}
+	},
+
 	process_templates: {
 		banner: async function (config, image_list) {
 			const $ = utils;
 			const banner_file = await $.read_path(`./banners/${config.sizes[0]}.html`),
-						templatePath = `${__dirname}/${$.paths.template.banner}`,
-						options = {
-							pretty: true,
-							filename: "index.html",
-						},
-						locals = {
-							images: image_list,
-							imgPath: $.paths.directories.images,
-							width: config.sizes[0].split("x")[0],
-							height: config.sizes[0].split("x")[1],
-							pageTitle: config.sizes[0],
-						},
-						html = pug.renderFile(templatePath, Object.assign(options, locals));
+			templatePath = `${__dirname}/${$.paths.template.banner}`,
+			options = {
+				pretty: true,
+				filename: "index.html",
+			},
+			locals = {
+				images: image_list,
+				imgPath: $.paths.directories.images,
+				width: config.sizes[0].split("x")[0],
+				height: config.sizes[0].split("x")[1],
+				pageTitle: config.sizes[0],
+			},
+			html = pug.renderFile(templatePath, Object.assign(options, locals));
 
 			if (banner_file) return $.handle_notice(`Your first banner, ${config.sizes[0]} already exists. You can regenerate it from the template by deleting ${config.sizes[0]}.html and running 'ani one' again.`);
 
@@ -127,18 +143,18 @@ const utils = {
 			const $ = utils;
 			try {
 				let 	banner_files = await fs.readdirAsync("./banners/"),
-							scrubber = await $.read_path(`${__dirname}/assets/GSDevTools.js`),
-							templatePath = `${__dirname}/${$.paths.template.dev}`;
-							banner_files = banner_files.filter((filename) => !$.is_hidden(filename));
+				scrubber = await $.read_path(`${__dirname}/assets/GSDevTools.js`),
+				templatePath = `${__dirname}/${$.paths.template.dev}`;
+				banner_files = banner_files.filter((filename) => !$.is_hidden(filename));
 				const options = {
-								pretty: true,
-								filename: "index.html",
-							},
-							locals = {
-								banners: banner_files,
-								scrubber: scrubber
-							},
-							html = pug.renderFile(templatePath, Object.assign(options, locals));
+					pretty: true,
+					filename: "index.html",
+				},
+				locals = {
+					banners: banner_files,
+					scrubber: scrubber
+				},
+				html = pug.renderFile(templatePath, Object.assign(options, locals));
 				await fs.writeFileAsync("./index.html", html);
 			} catch (e) {
 				return Promise.reject("Failed to process development template.")
@@ -146,44 +162,59 @@ const utils = {
 		},
 		preview: async function () {
 			const $ = utils,
-						config = JSON.parse(await $.read_path("./ani-conf.json"));
-			if (!config) return Promise.reject("No config found. Watch failed.");
+			config = JSON.parse(await $.read_path("./ani-conf.json"));
+			if (!config) return Promise.reject("No config found. Preview failed.");
 
 			try {
 				let animated_banners = await $.get_files_in("./banners/"),
 						static_banners = await $.get_files_in("./assets/statics/");
 
-				animated_banners = animated_banners.map((banner) => {
+				animated_banners = await Promise.all(animated_banners.map(async(banner) => {
 					const newPath = banner.path.replace(/\.\/banners\//ig, "banners/"),
 								size = banner.layer_name;
+
+					// Images File Size
+					let fileSize = await $.getDirectorySize(`./assets/images/${size}`);
+					// Add HTML file size
+					fileSize = fileSize + fs.statSync(newPath)["size"]
+					// Convert to kB
+					fileSize = (fileSize / 1024).toFixed(2) + "kB";
+
 					return banner = Object.assign(banner, {
 						path: newPath,
 						width: size.split("x")[0],
 						height: size.split("x")[1],
+						fileSize: fileSize
 					})
-				});
+				}));
 
-				static_banners = static_banners.map((banner) => {
-					var newPath = banner.path.replace(/\.\/assets\//ig, "assets/")
-					return banner = Object.assign(banner, {path: newPath})
-				});
+				static_banners = await Promise.all(static_banners.map(async(banner) => {
+					const newPath = banner.path.replace(/\.\/assets\//ig, "assets/");
+					// $.handle_success(newPath);
+					let fileSize = fs.statSync(newPath)["size"];
+					fileSize = (fileSize / 1024).toFixed(2) + "kB";
+					return banner = Object.assign(banner, {
+						path: newPath,
+						fileSize: fileSize
+					})
+				}));
 
 				const templatePath = `${__dirname}/${$.paths.template.preview}`,
-							options = {
-								pretty: true,
-								filename: "index.html",
-							},
-							locals = {
-								randomNumber: Math.random(),
-								banners: {
-									animated: animated_banners,
-									statics: static_banners,
-								},
-								pageTitle: config.project,
-							},
-							html = pug.renderFile(templatePath, Object.assign(options, locals));
-				await fs.writeFileAsync("./preview/index.html", html)
-				return Promise.resolve();
+					options = {
+						pretty: true,
+						filename: "index.html",
+					},
+					locals = {
+						randomNumber: Math.random(),
+						banners: {
+							animated: animated_banners,
+							statics: static_banners,
+						},
+						pageTitle: config.project,
+					},
+					html = pug.renderFile(templatePath, Object.assign(options, locals));
+					await fs.writeFileAsync("./preview/index.html", html)
+					return Promise.resolve();
 			} catch(e) {
 				return Promise.reject("Cannot find banners.")
 			}
@@ -195,7 +226,7 @@ const utils = {
 
 		browserSync.init({
 			server: {
-					baseDir: './'
+				baseDir: './'
 			},
 			files: this.paths.watch,
 			logPrefix: config.project,
@@ -228,6 +259,7 @@ const utils = {
 			return Promise.reject(`Problem getting files in ${filePath}`)
 		}
 	},
+
 	copy_files_in: async function (srcPath, targetPath) {
 		try {
 			let srcFiles = await this.read_dir(srcPath);
@@ -240,7 +272,7 @@ const utils = {
 		} catch (e) {
 			return Promise.reject(`Problem copying files from ${srcPath} to ${targetPath}.`);
 		}
- 	},
+	},
 	str_replace_in_files: async function (file_path, target, replacement) {
 		try {
 			let result = await fs.readFileAsync(file_path, "utf8");
