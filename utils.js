@@ -97,21 +97,19 @@ const utils = {
 			return Promise.reject("Problem finding image assets.")
 		}
 	},
-
-	getDirectorySize: async function(dir) {
+	get_directory_size: async function(dir) {
 		try{
 			const subdirs = (await fs.readdir(dir));
 			const files = await Promise.all(subdirs.map(async (subdir) => {
 				const res = resolve(dir, subdir);
 				const s = (await fs.stat(res));
-				return s.isDirectory() ? getDirectorySize(res) : (s.size);
+				return s.isDirectory() ? get_directory_size(res) : (s.size);
 			}));
 			return Promise.resolve( files.reduce((a, f) => a+f, 0) );
 		}catch(e){
 			return Promise.reject('Failed to get file or directory.');
 		}
 	},
-
 	process_templates: {
 		banner: async function (config, image_list) {
 			const $ = utils;
@@ -174,7 +172,7 @@ const utils = {
 								size = banner.layer_name;
 
 					// Images File Size
-					let fileSize = await $.getDirectorySize(`./assets/images/${size}`);
+					let fileSize = await $.get_directory_size(`./assets/images/${size}`);
 					// Add HTML file size
 					fileSize = fileSize + fs.statSync(newPath)["size"]
 					// Convert to kB
@@ -259,7 +257,6 @@ const utils = {
 			return Promise.reject(`Problem getting files in ${filePath}`)
 		}
 	},
-
 	copy_files_in: async function (srcPath, targetPath) {
 		try {
 			let srcFiles = await this.read_dir(srcPath);
