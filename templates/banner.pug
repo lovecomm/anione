@@ -46,8 +46,9 @@ html(lang="en")
 		|
 		|
 		a(data-anione="markup" href='#ANIONE:vendorLink' id='bannerLink')
+			|
 			each image in images
-				| <img src="#{imgPath + image.filename}" id="#{image.layer_name}" alt="#{image.layer_name}" />
+				| <img src="#{imgPath}/#{image.filename}" id="#{image.layer_name}" alt="#{image.layer_name}" />
 				|
 		|
 		|

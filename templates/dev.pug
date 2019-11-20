@@ -86,6 +86,13 @@ html(lang="en")#anione-dev-html
 				margin: 100px 0 0;
 				position: relative;
 			}
+			body#anione-dev-body > #view > #filesize {
+				width: 80px;
+				font-family: sans-serif;
+				text-align: center;
+				margin: 40px 0 0;
+				position: relative;
+			}
 			
 	body#anione-dev-body
 		div#nav
@@ -94,11 +101,13 @@ html(lang="en")#anione-dev-html
 		div#view
 			div#banner-wrapper
 			div#scrubber
+			div#filesize
 		script.
 			$(document).ready(function() {
 				var banners = $("#nav").find("button");
 				var destination = $("#banner-wrapper");
 				var scrubber = $("#scrubber");
+				var filesize = $("#filesize");
 				var cookie_is_set = document.cookie.match(/^(.*;)?\s*anione_current_size\s*=\s*[^;]+(.*)?$/);
 
 				var gsaptools = GSDevTools.create({
@@ -130,8 +139,7 @@ html(lang="en")#anione-dev-html
 				}
 
 				// Source: http://stackoverflow.com/questions/7718935/load-scripts-asynchronously
-				function loadScript(src, callback)
-				{
+				function loadScript(src, callback){
 					var s,
 							r,
 							t;
@@ -166,7 +174,9 @@ html(lang="en")#anione-dev-html
 				}
 
 				function handleAjax (link) {
-					$.ajax({
+					var fileSizeTotal = 0;
+
+					var xhr = $.ajax({
 						type: "GET",
 						url: link,
 						dataFilter: dataFilter,
@@ -177,9 +187,35 @@ html(lang="en")#anione-dev-html
 								$(destination).append(response.href_styles)
 								$(destination).append(response.styles);
 								$(destination).append(response.markup);
+
+								var element = document.createElement('div');
+								element.innerHTML = response.markup;
+								var imgSrcUrls = element.getElementsByTagName("img");
+
+								var imgSrcArray = [];
+								for (var i = 0; i < imgSrcUrls.length; i++) {
+									var urlValue = imgSrcUrls[i].getAttribute("src");
+									if (urlValue) {
+										imgSrcArray.push(urlValue)
+									}
+								}
+
+								imgSrcArray.forEach(function(item){
+									var imgxhr = $.ajax({
+										type: "GET",
+										url: item,
+										success: function (response) {
+											fileSizeTotal = parseInt(fileSizeTotal) + parseInt(imgxhr.getResponseHeader('Content-Length'));
+										},
+										complete: function(){
+											filesize.html( (fileSizeTotal / 1024).toFixed(2) + "kB");
+										}
+									});
+								})
 								window.banner = new Function(response.scripts)();
 								handleScrubber();
 							})
+							fileSizeTotal = fileSizeTotal + xhr.getResponseHeader('Content-Length');
 						},
 						error: function (response) {
 							console.error("Error in getting banner, ", response);
