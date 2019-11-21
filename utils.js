@@ -8,6 +8,8 @@ const Promise = require("bluebird"),
 			pug = require("pug"),
 			colors = require("colors"),
 			imagemin = require('imagemin'),
+			merge = require('merge-objects'),
+			moment = require('moment'),
 			browserSync = require('browser-sync').create();
 
 const utils = {
@@ -166,6 +168,7 @@ const utils = {
 			try {
 				let animated_banners = await $.get_files_in("./banners/"),
 						static_banners = await $.get_files_in("./assets/statics/");
+				let allbannerscombined = {};
 
 				animated_banners = await Promise.all(animated_banners.map(async(banner) => {
 					const newPath = banner.path.replace(/\.\/banners\//ig, "banners/"),
@@ -182,20 +185,39 @@ const utils = {
 						path: newPath,
 						width: size.split("x")[0],
 						height: size.split("x")[1],
-						fileSize: fileSize
+						fileSize: fileSize,
+						animated: true
 					})
 				}));
 
 				static_banners = await Promise.all(static_banners.map(async(banner) => {
 					const newPath = banner.path.replace(/\.\/assets\//ig, "assets/");
-					// $.handle_success(newPath);
 					let fileSize = fs.statSync(newPath)["size"];
 					fileSize = (fileSize / 1024).toFixed(2) + "kB";
+
 					return banner = Object.assign(banner, {
 						path: newPath,
-						fileSize: fileSize
+						fileSize: fileSize,
+						animated: false
 					})
 				}));
+
+				for ( var i=0; i<animated_banners.length; i++ ) {
+					let tempData = { 'animated_banner': animated_banners[i]};
+					allbannerscombined[animated_banners[i].layer_name] = tempData;
+				}
+
+				for ( var i=0; i<static_banners.length; i++ ) {
+					let tempData = { 'static_banner': static_banners[i]};
+					if( typeof(allbannerscombined[static_banners[i].layer_name]) == 'object'){
+						let bannersCombined = merge( allbannerscombined[static_banners[i].layer_name], tempData );
+						allbannerscombined[static_banners[i].layer_name] = bannersCombined;
+					} else {
+						allbannerscombined[static_banners[i].layer_name] = tempData;
+					}
+				}
+
+				let date_obj = moment().format('MMMM Do YYYY, h:mm:ss a');
 
 				const templatePath = `${__dirname}/${$.paths.template.preview}`,
 					options = {
@@ -203,16 +225,14 @@ const utils = {
 						filename: "index.html",
 					},
 					locals = {
+						genDate: date_obj,
 						randomNumber: Math.random(),
-						banners: {
-							animated: animated_banners,
-							statics: static_banners,
-						},
+						banners: allbannerscombined,
 						pageTitle: config.project,
 					},
 					html = pug.renderFile(templatePath, Object.assign(options, locals));
-					await fs.writeFileAsync("./preview/index.html", html)
-					return Promise.resolve();
+				await fs.writeFileAsync("./preview/index.html", html)
+				return Promise.resolve();
 			} catch(e) {
 				return Promise.reject("Cannot find banners.")
 			}

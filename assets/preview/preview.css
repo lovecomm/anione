@@ -209,7 +209,6 @@ header {
     text-align: center;
     font-size: 32px;
     font-weight: 100;
-    text-transform: uppercase;
     padding: 50px 50px 0;
     margin-bottom: 30px
 }
@@ -239,13 +238,13 @@ h2 {
     line-height: 2;
     margin-top: 10px;
     font-size: 22px;
-    font-weight: 600;
+    font-weight: 500;
     text-transform: uppercase
 }
 h3 {
     line-height: 2;
     margin-top: 10px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 300
 }
 ul {
@@ -261,6 +260,41 @@ ul li {
 .links > div {
 	width: 50%;
 }
+
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+table td, table th {
+  border: 1px solid #ddd;
+  padding: .75rem;
+}
+
+table tr:nth-child(even){background-color: #f2f2f2;}
+
+table tr:hover {background-color: #ddd;}
+
+table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #00529c;
+  color: white;
+	font-size: 1.0625rem;
+}
+
+table tr:nth-child(2) th {
+  background-color: #9e9e9e;
+}
+
+
+/* table > thead > tr:first-child > th:first-child {
+	background: white;
+	border: 0;
+} */
+
 .featherlight-content iframe {
     overflow: hidden!important
 }
