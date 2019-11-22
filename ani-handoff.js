@@ -41,11 +41,11 @@ exports.handoff = async function () {
 				$.handle_notice("No static files found. As such, none will be added to the handoff.");
 			}
 		} catch (e) {
-			$.handle_notice("No static files found. As such, none will be added to the handoff.");
+			$.handle_error("Problem generating static files.");
 		}
 		// end statics
 
-		for (let vendor_name in config.vendors)	{
+		for (let vendor_name in config.vendors) {
 			const vendor_path = `${handoff_path}/${vendor_name}`;
 			await fs.mkdirAsync(vendor_path);
 
@@ -61,7 +61,7 @@ exports.handoff = async function () {
 					await zipFolder(banner.path, {excludeParentFolder: true});
 					await writeToFile(`${banner.path}.zip`);
 					await fs.rename(`${banner.path}.zip`, `${vendor_path}/${config.project}-${banner.size}.zip`, (err) => {
-							if (err) throw err
+							if (err) $.handle_error( err )
 						});
 					await rimraf(banner.path)
 

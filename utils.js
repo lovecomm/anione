@@ -61,7 +61,7 @@ const utils = {
 			source = this.replace_string_regex(source, "<!-- ANIONE: vendorScriptHeader -->", vendor.scriptHeader);
 			source = this.replace_string_regex(source, "<!-- ANIONE: vendorScriptFooter -->", vendor.scriptFooter);
 			source = this.replace_string_regex(source, "#ANIONE:vendorLink", vendor.link);
-			source = this.replace_string_regex(source, "../assets/images/", "");
+			source = this.replace_string_regex(source, "../assets/images/" + size + "/", "");
 			source = source.replace(/return \(function\(\) \{/, '(function() {');
 
 			return Promise.resolve({
@@ -76,19 +76,16 @@ const utils = {
 	get_images_for: async function (size, copy, destination) {
 		let img_array = [];
 		try {
-			const files = await fs.readdirAsync(`./assets/images/${size}`);
+			const files = await fs.readdirAsync(`./assets/images/${size}/`);
 			for (let i = 0; i < files.length; i++) {
 				let filename = files[i];
 
 				if (!this.is_hidden(filename)) { // we don't want hidden files
-					let layer_name = camel(filename.split('-')[1].split('.')[0]);
-
-					if( filename.indexOf( size ) > -1 ) { // specific to the size provided
+					let layer_name = camel(filename.split('.')[0]);
 						img_array.push({
 							"filename" : filename,
 							"layer_name" : layer_name
 						});
-					}
 				}
 			}
 			if (copy) {
@@ -123,7 +120,7 @@ const utils = {
 			},
 			locals = {
 				images: image_list,
-				imgPath: $.paths.directories.images,
+				imgPath: $.paths.directories.images + config.sizes[0],
 				width: config.sizes[0].split("x")[0],
 				height: config.sizes[0].split("x")[1],
 				pageTitle: config.sizes[0],
