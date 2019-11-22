@@ -173,6 +173,7 @@ const utils = {
 
 					// Images File Size
 					let fileSize = await $.get_directory_size(`./assets/images/${size}`);
+
 					// Add HTML file size
 					fileSize = fileSize + fs.statSync(newPath)["size"]
 					// Convert to kB
@@ -231,7 +232,7 @@ const utils = {
 				await fs.writeFileAsync("./preview/index.html", html)
 				return Promise.resolve();
 			} catch(e) {
-				return Promise.reject("Cannot find banners.")
+				return Promise.reject("Cannot find banners or image directories. Preview Failed.")
 			}
 		},
 	},
