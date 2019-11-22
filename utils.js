@@ -53,7 +53,8 @@ const utils = {
 	vendorify: async function(config, banner_info, vendor_name, vendor_path) {
 		const vendor = config.vendors[vendor_name],
 		size = banner_info.layer_name,
-		destPath = "./" + config.project + "-handoff/" + vendor_name + "/" + size,
+		destPath = "./preview/" + config.project + "-handoff/" + vendor_name + "/" + size,
+
 		source_path = "./banners/" + size + ".html";
 
 		try {

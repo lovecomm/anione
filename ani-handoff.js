@@ -15,7 +15,8 @@ exports.handoff = async function () {
 
 	try {
 		const banner_files = await $.get_files_in("./banners/"),
-					handoff_path = "./" + config.project + "-handoff",
+					handoff_path = "./preview/" + config.project + "-handoff",
+
 					handoff_path_exists = $.read_path(handoff_path);
 
 		if (handoff_path_exists) await rimraf(handoff_path);
@@ -64,7 +65,6 @@ exports.handoff = async function () {
 							if (err) $.handle_error( err )
 						});
 					await rimraf(banner.path)
-
 				} catch (e) {
 					$.handle_error(`Failed to gather assets for or zip ${banner_info.filename}`);
 				}

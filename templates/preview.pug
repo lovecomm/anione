@@ -54,6 +54,7 @@ html(lang="en")#anione-dev-html
 								td -
 								td -
 		footer
+			
 		script(src="featherlight.js" type="text/javascript" charset="utf-8")
 		script(src="featherlight.gallery.js" type="text/javascript" charset="utf-8")
 		script(type="text/javascript").
@@ -67,6 +68,16 @@ html(lang="en")#anione-dev-html
 						$("iframe").attr("scrolling", "no");
 					}, 0);
 				});
+			});
+			
+			var xhr = $.ajax({
+				url:'#{pageTitle}-handoff.zip',
+				type:'HEAD',
+				success: function(){
+					if( xhr.getResponseHeader('Content-Length') > 5000 ){
+						$('footer').append( $('<a href="./#{pageTitle}-handoff.zip">Handoff Download</a>') );
+					}
+				}
 			});
 		script(src="enhance-featherlight.js")
 			
