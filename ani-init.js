@@ -49,9 +49,6 @@ const 	Promise = require("bluebird"),
 let 	vendors = (async () => await $.read_path(__dirname + "/assets/conf-options/vendors.json"))(),
 			sizes = (async () => await $.read_path(__dirname + "/assets/conf-options/sizes.json"))();
 
-
-
-
 exports.init = async function () {
 	const config_file = await $.read_path("./ani-conf.json"),
 				readme_file = await $.read_path("./README.md"),
@@ -68,7 +65,13 @@ exports.init = async function () {
 
 		await fs.writeFileAsync("ani-conf.json", config);
 
-		$.handle_success(`${config}\n\nHere is your project config. If this is wrong, you can edit 'ani-conf.json' manually.\n`)
+		config = JSON.parse(config);
+
+		for (let size of config.sizes) {
+			await fs.mkdirAsync("./assets/images/" + size);
+		}
+
+		$.handle_success(`Your project has been configured! You can edit 'ani-conf.json' manually to correct errors.`)
 
 		// Copy README file to project instance
 		if (!readme_file) fs.createReadStream(__dirname + `/README.md`).pipe(fs.createWriteStream("./README.md"));
