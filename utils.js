@@ -8,6 +8,8 @@ const Promise = require("bluebird"),
 			pug = require("pug"),
 			colors = require("colors"),
 			imagemin = require('imagemin'),
+			imageminJpegtran = require('imagemin-jpegtran'),
+			imageminPngquant = require('imagemin-pngquant'),
 			merge = require('merge-objects'),
 			moment = require('moment'),
 			browserSync = require('browser-sync').create();
@@ -90,7 +92,17 @@ const utils = {
 				}
 			}
 			if (copy) {
-				await imagemin([`./assets/images/${size}/*.{jpg,png,gif}`], {destination: destination});
+				await imagemin([`./assets/images/${size}/*.{jpg,png,gif}`],
+					{
+						destination: destination,
+						plugins: [
+							imageminJpegtran(),
+							imageminPngquant({
+								quality: [0.6, 0.8]
+							})
+						]
+					}
+				);
 			}
 			return Promise.resolve(img_array);
 		} catch (e) {
@@ -318,10 +330,7 @@ const utils = {
 			"./assets",
 			"./assets/statics",
 			"./assets/images",
-			"./banners",
-			"./preview",
-			"./preview/assets",
-			"./preview/banners",
+			"./banners"
 		],
 		directories: {
 			"images": "../assets/images/",

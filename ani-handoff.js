@@ -5,18 +5,22 @@ const 	Promise = require("bluebird"),
 				rimraf = Promise.promisify(require('rimraf')),
 				FolderZip = require('folder-zip'),
 				imagemin = require('imagemin'),
+				imageminJpegtran = require('imagemin-jpegtran'),
+				imageminPngquant = require('imagemin-pngquant'),
 				colors = require("colors"),
 				$ = require("./utils");
 
 exports.handoff = async function () {
 	const config = JSON.parse(await $.read_path("./ani-conf.json")),
-				first_banner_file = await $.read_path(`./banners/${config.sizes[0]}.html`);
+				first_banner_file = await $.read_path(`./banners/${config.sizes[0]}.html`),
+				preview_path = fs.existsSync("./preview/");
+
 	if (!config || !first_banner_file) return $.handle_error("No project found, please run 'ani init' and 'ani one' to start your project.");
+	if (!preview_path) return $.handle_error("No preview directory found, please run 'ani preview' to generate a project preview first.");
 
 	try {
 		const banner_files = await $.get_files_in("./banners/"),
 					handoff_path = "./preview/" + config.project + "-handoff",
-
 					handoff_path_exists = $.read_path(handoff_path);
 
 		if (handoff_path_exists) await rimraf(handoff_path);
@@ -27,7 +31,17 @@ exports.handoff = async function () {
 			let static_files = await $.read_dir("./assets/statics");
 			if (static_files) {
 				await fs.mkdirAsync(`${handoff_path}/statics`);
-				await imagemin([`./assets/statics/*.{jpg,png,gif}`], {destination: `${handoff_path}/statics`});
+				await imagemin([`./assets/statics/*.{jpg,png,gif}`],
+					{
+						destination: `${handoff_path}/statics`,
+						plugins: [
+							imageminJpegtran(),
+							imageminPngquant({
+								quality: [0.6, 0.8]
+							})
+						]
+					}
+				);
 
 				// Rename statics with project name
 				await fs.readdir(`${handoff_path}/statics`, (err, files) => {
