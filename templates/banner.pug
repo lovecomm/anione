@@ -34,14 +34,13 @@ html(lang="en")
 				border: none;
 			}
 
-			a > * { opacity: 0; } /* Start with all layers hidden to make it visually easier to develop */
-
 			/* CSS HELPER CLASSES */
 			.halign { left: 0; right: 0; margin: auto; } /* Align a DOM element horizontally */
 			.valign {	top: 0;	bottom: 0; margin: auto; } /* Align a DOM element vertically*/
 			/* /CSS HELPER CLASSES */
+
 		<!-- DoubleClick Greensock CDN (TweenMax) -->
-		script(type="text/javascript" src="https://s0.2mdn.net/ads/studio/cached_libs/tweenmax_2.1.2_min.js")
+		script(type="text/javascript" src="https://s0.2mdn.net/ads/studio/cached_libs/gsap_3.5.1_min.js")
 	body
 		|
 		|
@@ -57,7 +56,6 @@ html(lang="en")
 			| var tl = new TimelineMax();
 			| var h = #{height};
 			| var w = #{width};
-			| var banner = document.getElementById('bannerLink');
 			|
 			| tl // ANIONE: main timeline
 			| })();
