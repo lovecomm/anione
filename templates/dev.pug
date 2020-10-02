@@ -4,7 +4,7 @@ html(lang="en")#anione-dev-html
 		title= "Anione Development"
 		meta(charset='UTF-8')
 		script(src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous")
-		script(src="https://s0.2mdn.net/ads/studio/cached_libs/tweenmax_2.1.2_min.js")
+		script(src="https://s0.2mdn.net/ads/studio/cached_libs/gsap_3.5.1_min.js")
 		script.
 			!{scrubber}
 		style(type="text/css").
@@ -15,14 +15,14 @@ html(lang="en")#anione-dev-html
 			}
 
 			body#anione-dev-body {
-				background-color: #666;
+				background-color: #020202;
 				display: flex;
 				margin: 0;
 			}
 
 			body#anione-dev-body > #nav {
 				width: 250px;
-				background: #003a6d;
+				background: #353535;
 				box-shadow:  0 20px #333;
 				display: flex;
 				flex-direction: column;
@@ -44,7 +44,8 @@ html(lang="en")#anione-dev-html
 
 			body#anione-dev-body > #nav > div > button:first-of-type { border-top: 1px solid rgba(255, 255, 255, 0.5);}
 
-			body#anione-dev-body > #nav > div > button:hover { background: #00529c; }
+			body#anione-dev-body > #nav > div > button.active { background: #00529c; }
+			body#anione-dev-body > #nav > div > button:hover { background: #00305a; }
 
 			body#anione-dev-body > #nav > div#title {
 				text-align: center;
@@ -65,10 +66,10 @@ html(lang="en")#anione-dev-html
 			}
 
 			body#anione-dev-body > #view > #banner-wrapper {
-				padding: 20px;
 				display: flex;
 				flex-direction: column;
 				align-items: center;
+				border: 1px solid #666;
 			}
 
 			body#anione-dev-body > #view > #banner-wrapper .warning {
@@ -81,14 +82,23 @@ html(lang="en")#anione-dev-html
 			}
 
 			body#anione-dev-body > #view > #scrubber {
-				width: 85 %;
+				width: 650px;
 				text-align: center;
-				margin: 40px 0;
+				margin: 100px 0 0;
+				position: relative;
+			}
+			body#anione-dev-body > #view > #filesize {
+				width: 80px;
+				font-family: sans-serif;
+				text-align: center;
+				position: absolute;
+				color: white;
+				top: 0;
+				right: 0;
+				padding: 1rem;
+				background-color: #353535;
 			}
 
-			body#anione-dev-body > #view > #scrubber polygon,
-			body#anione-dev-body > #view > #scrubber rect { fill: white !important; }
-			body#anione-dev-body > #view > #scrubber > div:last-of-type { background-color: white !important; }
 	body#anione-dev-body
 		div#nav
 			each banner in banners
@@ -96,12 +106,20 @@ html(lang="en")#anione-dev-html
 		div#view
 			div#banner-wrapper
 			div#scrubber
+			div#filesize
 		script.
 			$(document).ready(function() {
 				var banners = $("#nav").find("button");
 				var destination = $("#banner-wrapper");
 				var scrubber = $("#scrubber");
+				var filesize = $("#filesize");
 				var cookie_is_set = document.cookie.match(/^(.*;)?\s*anione_current_size\s*=\s*[^;]+(.*)?$/);
+
+				var gsaptools = GSDevTools.create({
+					globalSync:false,
+					container: "#scrubber",
+					minimal: false
+				});
 
 				window.getCookie = function(name) {
 					match = document.cookie.match(new RegExp(name + '=([^;]+)'));
@@ -116,6 +134,8 @@ html(lang="en")#anione-dev-html
 				}
 
 				$(banners).on("click", function() {
+					$(banners).removeClass('active');
+					$(this).addClass('active');
 					var link = $(this).attr("data-link");
 					document.cookie = "anione_current_size=" + getBannerSize(this);
 					handleAjax.call(this, link);
@@ -126,8 +146,7 @@ html(lang="en")#anione-dev-html
 				}
 
 				// Source: http://stackoverflow.com/questions/7718935/load-scripts-asynchronously
-				function loadScript(src, callback)
-				{
+				function loadScript(src, callback){
 					var s,
 							r,
 							t;
@@ -162,21 +181,48 @@ html(lang="en")#anione-dev-html
 				}
 
 				function handleAjax (link) {
-					$.ajax({
+					var fileSizeTotal = 0;
+
+					var xhr = $.ajax({
 						type: "GET",
 						url: link,
 						dataFilter: dataFilter,
 						success: function (response) {
 							$(destination).text("");
-							$(scrubber).text("");
 
 							recursiveScriptLoad(response.src_scripts, function() {
 								$(destination).append(response.href_styles)
 								$(destination).append(response.styles);
 								$(destination).append(response.markup);
+
+								var element = document.createElement('div');
+								element.innerHTML = response.markup;
+								var imgSrcUrls = element.getElementsByTagName("img");
+
+								var imgSrcArray = [];
+								for (var i = 0; i < imgSrcUrls.length; i++) {
+									var urlValue = imgSrcUrls[i].getAttribute("src");
+									if (urlValue) {
+										imgSrcArray.push(urlValue)
+									}
+								}
+
+								imgSrcArray.forEach(function(item){
+									var imgxhr = $.ajax({
+										type: "GET",
+										url: item,
+										success: function (response) {
+											fileSizeTotal = parseInt(fileSizeTotal) + parseInt(imgxhr.getResponseHeader('Content-Length'));
+										},
+										complete: function(){
+											filesize.html( (fileSizeTotal / 1024).toFixed(2) + "kB");
+										}
+									});
+								})
 								window.banner = new Function(response.scripts)();
 								handleScrubber();
 							})
+							fileSizeTotal = fileSizeTotal + xhr.getResponseHeader('Content-Length');
 						},
 						error: function (response) {
 							console.error("Error in getting banner, ", response);
@@ -192,7 +238,6 @@ html(lang="en")#anione-dev-html
 					var scripts = scripts_regex.exec(response)[1];
 					scripts = scripts.replace("(function() { // ANIONE: main timeline function", "return (function() { // ANIONE: main timeline function");
 					scripts = scripts.replace("tl // ANIONE: main timeline", "return tl // ANIONE: main timeline")
-					var has_timeline = /[^tl // ANIONE: main timeline][1-9]/.test(scripts); // we just have to know if the timeline has any duration... so really we just need to find a number after the start of the timeline. This is obviously hackish... potential problems include if there are any other code after the timeline that includes numbers, or if someone comments out the only timeline method that contains numbers/time.
 					var src_scripts_regex = /<script src="([\s\S]*?)"><\/script>/ig;
 					var src_scripts = [];
 					var markup = response.match(/<a data-anione="markup".*?>[\s\S]*?<\/a>/ig)[0];
@@ -212,14 +257,9 @@ html(lang="en")#anione-dev-html
 						}
 					}
 
-					if (!has_timeline) {
-						markup = "<p class='warning'>No timeline found. After you start adding methods to the greensock timeline in your banner, this message will go away. If it does not, then there was a problem finding any duration of time on your timeline.</p>" + markup
-						console.log(markup)
-					}
-
 					return {
 						styles: styles,
-						scripts: has_timeline === true ? scripts : "",
+						scripts: scripts,
 						markup: markup,
 						src_scripts: src_scripts,
 						href_styles: href_styles,
@@ -228,9 +268,8 @@ html(lang="en")#anione-dev-html
 
 				function handleScrubber () {
 					if (window.banner) {
-						var slider = new GSAPTLSlider(window.banner, "scrubber", {
-							width: 300
-						});
+						gsaptools.animation(window.banner);
+						gsaptools.update();
 					}
 				}
 			});

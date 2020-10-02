@@ -3,31 +3,58 @@ html(lang="en")#anione-dev-html
 	head
 		title= pageTitle
 		meta(charset='UTF-8')
+		meta(http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate")
+		meta(http-equiv="Pragma" content="no-cache")
+		meta(http-equiv="Expires" content="0")
 		link(href="https://fonts.googleapis.com/css?family=Roboto:400,400italic,100,100italic,700,300,300italic")
 		link(href="preview.css" rel="stylesheet")
 		script(src="https://code.jquery.com/jquery-3.1.1.js" integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA=" crossorigin="anonymous")
 	body
 		header
-			h1 #{pageTitle}-Banners
+			div.logo
+				img(src="https://lovecomm.net/signature/img/love@2x.png" alt="Love" width="80")
+			h2 #{pageTitle}-Banners
+			h3
+				em –Last modified: #{genDate}–
 		div.wrapper
 			div.main
-				if banners.statics.length > 0
-					if banners.animated.length > 0
-						p.disclaimer The <strong>Static Banners</strong> will open in a gallery like fashion, where you can click through each of them within the lightbox. However, the <strong>Animated Banners</strong> will have to be opened individually, but will still load in a&nbsp;lightbox.
-				div.animated
-					if banners.statics.length > 0
-						h2 Static Banners
-						ul
-							each banner in banners.statics
-								| <li><a href="#{banner.path}" class="gallery banner">#{banner.layer_name}</a></li>
-								|
-					if banners.animated.length > 0
-						h2 Animated Banners
-						ul
-							each banner in banners.animated
-								| <li><a class="html5 banner" href="#{banner.path}" data-featherlight="iframe" data-featherlight-iframe-width="#{banner.width}" data-featherlight-iframe-height="#{banner.height}">#{banner.layer_name}</a></li>
-								|
+				table
+					thead
+						tr
+							th Size
+							th(colspan="2") Static
+							th(colspan="2") Animated
+						tr
+							th 
+							th Preview
+							th File Size
+							th Preview
+							th File Size
+					tbody
+					each val, index in banners
+						tr
+							td #{index}
+							| 
+							if val.static_banner
+								td
+									| <a href="#{val.static_banner.path}?v=#{randomNumber}" class="gallery">
+									| View
+									| </a>
+								td #{val.static_banner.fileSize}
+							else
+								td -
+								td -
+							if val.animated_banner
+								td
+									| <a class="html5 banner" href="#{val.animated_banner.path}?v=#{randomNumber}" data-featherlight="iframe" data-featherlight-iframe-width="#{val.animated_banner.width}" data-featherlight-iframe-height="#{val.animated_banner.height}">
+									| View
+									| </a>
+								td #{val.animated_banner.fileSize}
+							else
+								td -
+								td -
 		footer
+			
 		script(src="featherlight.js" type="text/javascript" charset="utf-8")
 		script(src="featherlight.gallery.js" type="text/javascript" charset="utf-8")
 		script(type="text/javascript").
@@ -41,6 +68,16 @@ html(lang="en")#anione-dev-html
 						$("iframe").attr("scrolling", "no");
 					}, 0);
 				});
+			});
+			
+			var xhr = $.ajax({
+				url:'#{pageTitle}-handoff.zip',
+				type:'HEAD',
+				success: function(){
+					if( xhr.getResponseHeader('Content-Length') > 5000 ){
+						$('footer').append( $('<a href="./#{pageTitle}-handoff.zip">Handoff Download</a>') );
+					}
+				}
 			});
 		script(src="enhance-featherlight.js")
 			

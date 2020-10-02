@@ -31,36 +31,32 @@ html(lang="en")
 				cursor: pointer;
 				position: absolute;
 				z-index: 1;
-				border: none; /*This is to get rid of an IE rendering bug/feature/whatever that adds a red boarder to all of the child elements of the link tag*/
+				border: none;
 			}
-
-			a > * { opacity: 0; } /* Start with all layers hidden to make it visually easier to develop */
 
 			/* CSS HELPER CLASSES */
 			.halign { left: 0; right: 0; margin: auto; } /* Align a DOM element horizontally */
 			.valign {	top: 0;	bottom: 0; margin: auto; } /* Align a DOM element vertically*/
 			/* /CSS HELPER CLASSES */
+
 		<!-- DoubleClick Greensock CDN (TweenMax) -->
-		script(type="text/javascript" src="https://s0.2mdn.net/ads/studio/cached_libs/tweenmax_2.1.2_min.js")
+		script(type="text/javascript" src="https://s0.2mdn.net/ads/studio/cached_libs/gsap_3.5.1_min.js")
 	body
 		|
 		|
 		a(data-anione="markup" href='#ANIONE:vendorLink' id='bannerLink')
+			|
 			each image in images
-				| <img src="#{imgPath + image.filename}" id="#{image.layer_name}" alt="#{image.layer_name}" />
+				| <img src="#{imgPath}/#{image.filename}" id="#{image.layer_name}" alt="#{image.layer_name}" />
 				|
 		|
 		|
 		script(data-anione="scripts")
 			| (function() { // ANIONE: main timeline function
 			| var tl = new TimelineMax();
-			| var h = #{height}; // Banner's height
-			| var w = #{width}; // Banner's width
-			| var banner = document.getElementById('bannerLink');
+			| var h = #{height};
+			| var w = #{width};
 			|
-			each image in images
-				| var #{image.layer_name} = document.getElementById("#{image.layer_name}");
-				|
 			| tl // ANIONE: main timeline
 			| })();
 		<!-- ANIONE: vendorScriptFooter -->
